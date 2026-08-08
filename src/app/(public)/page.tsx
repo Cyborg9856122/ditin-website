@@ -1,6 +1,7 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
 import { PRODUCT_CATEGORY_LABELS, type ProductCategory } from "@/lib/domain/types"
+import { PixelPitchCalculator } from "@/components/pixel-pitch-calculator"
 
 const CATEGORY_BLURBS: Record<ProductCategory, string> = {
   led_wall: "Modular, seamless, built for stages and storefronts.",
@@ -179,6 +180,25 @@ export default function HomePage() {
               ) : null}
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-6 py-20">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
+          <div>
+            <p className="font-measured text-xs uppercase tracking-[0.25em] text-brand-green">
+              Not sure what you need?
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold text-brand-ink sm:text-3xl">
+              Work out your pixel pitch
+            </h2>
+            <p className="mt-3 leading-relaxed text-neutral-600">
+              Pixel pitch decides how close people can stand before an LED
+              screen looks sharp instead of grainy. Tell us the space (or a
+              pitch you&apos;ve seen quoted) and get a straight answer.
+            </p>
+          </div>
+          <PixelPitchCalculator />
         </div>
       </section>
 

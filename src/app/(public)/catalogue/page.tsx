@@ -14,6 +14,7 @@ import {
   type ProductCategory,
 } from "@/lib/domain/types"
 import { ProductCard } from "./product-card"
+import { CatalogueSearch } from "./catalogue-search"
 
 export const metadata = { title: "Catalogue" }
 export const revalidate = 3600
@@ -23,6 +24,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
   const category = asOne(searchParams.category) as ProductCategory | undefined
   const placement = asOne(searchParams.placement) as Placement | undefined
   const availability = asOne(searchParams.availability) as Availability | undefined
+  const search = asOne(searchParams.q)
 
   const supabase = await createSupabaseServerClient()
   const products = await listProducts(supabase, {
@@ -30,6 +32,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
     category,
     placement,
     availability,
+    search,
   })
 
   const imagesByProduct = await listPrimaryImagesForProducts(
@@ -37,7 +40,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
     products.map((p) => p.id),
   )
 
-  const filterCount = [category, placement, availability].filter(Boolean).length
+  const filterCount = [category, placement, availability, search].filter(Boolean).length
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
@@ -55,6 +58,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
         className="mt-8 flex flex-wrap items-center gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm"
         method="get"
       >
+        <CatalogueSearch defaultValue={search} />
         <select
           name="category"
           defaultValue={category ?? ""}

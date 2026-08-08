@@ -17,6 +17,7 @@ import {
   PRODUCT_CATEGORY_LABELS,
 } from "@/lib/domain/types"
 import { InquiryForm } from "../../inquire/inquiry-form"
+import { PixelPlaceholder } from "@/components/pixel-placeholder"
 
 export const revalidate = 3600
 
@@ -82,9 +83,7 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
                 className="object-cover"
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-sm text-neutral-400">
-                Photo coming soon
-              </div>
+              <PixelPlaceholder />
             )}
           </div>
           {images.length > 1 ? (

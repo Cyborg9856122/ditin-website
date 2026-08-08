@@ -6,6 +6,7 @@ import {
   PRODUCT_CATEGORY_LABELS,
   type Product,
 } from "@/lib/domain/types"
+import { PixelPlaceholder } from "@/components/pixel-placeholder"
 
 export function ProductCard({
   product,
@@ -17,7 +18,7 @@ export function ProductCard({
   return (
     <Link
       href={`/catalogue/${product.slug}`}
-      className="group overflow-hidden rounded-lg border border-neutral-200 bg-white transition hover:border-brand-green hover:shadow-sm"
+      className="group overflow-hidden rounded-lg border border-neutral-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10"
     >
       <div className="relative aspect-[4/3] bg-neutral-100">
         {imageUrl ? (
@@ -29,9 +30,7 @@ export function ProductCard({
             className="object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-neutral-400">
-            No photo yet
-          </div>
+          <PixelPlaceholder label="Sample item" />
         )}
         {product.is_placeholder ? (
           <span className="absolute left-2 top-2 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">

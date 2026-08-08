@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  /* Ditin Displays brand kit */
+  --color-brand-green: #06923e;
+  --color-brand-ink: #111111;
+  --color-brand-ink-soft: #212121;
+  --color-brand-accent: #e67514;
+}
+
+@theme inline {
+  --color-brand-green: var(--color-brand-green);
+  --color-brand-ink: var(--color-brand-ink);
+  --color-brand-ink-soft: var(--color-brand-ink-soft);
+  --color-brand-accent: var(--color-brand-accent);
+
+  --color-background: #ffffff;
+  --color-foreground: var(--color-brand-ink);
+  --color-ink: var(--color-brand-ink);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+  --font-arabic: var(--font-arabic);
+}
+
+body {
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+}
+
+.font-measured {
+  font-family: var(--font-mono), monospace;
+}

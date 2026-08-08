@@ -19,9 +19,9 @@ export function PixelPlaceholder({
 }) {
   const cells = Array.from({ length: COLS * ROWS }, (_, i) => {
     const r = seededRandom(i + 1)
-    const lit = r > 0.86
-    const accent = r > 0.955
-    return { lit, accent, delay: (seededRandom(i + 50) * 4).toFixed(2) }
+    const lit = r > 0.91
+    const accent = r > 0.975
+    return { lit, accent, delay: (seededRandom(i + 50) * 5).toFixed(2) }
   })
 
   return (
@@ -49,7 +49,7 @@ export function PixelPlaceholder({
                   ? "var(--color-brand-accent)"
                   : "var(--color-brand-green)"
                 : "rgba(255,255,255,0.08)",
-              animation: cell.lit ? "pixel-pulse 3.2s ease-in-out infinite" : undefined,
+              animation: cell.lit ? "pixel-pulse 4.5s ease-in-out infinite" : undefined,
               animationDelay: `${cell.delay}s`,
             }}
           />

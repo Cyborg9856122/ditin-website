@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { brand } from "@/lib/config/brand"
+import { MobileNav } from "@/components/mobile-nav"
 
 const NAV_LINKS = [
   { href: "/catalogue", label: "Catalogue" },
@@ -21,7 +22,7 @@ export function SiteHeader() {
             width={220}
             height={94}
             priority
-            className="h-14 w-auto"
+            className="h-11 w-auto sm:h-14"
           />
         </Link>
 
@@ -33,12 +34,15 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <Link
-          href="/inquire"
-          className="rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
-        >
-          Get a quote
-        </Link>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link
+            href="/inquire"
+            className="rounded-md bg-brand-green px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90 sm:px-4 sm:text-sm"
+          >
+            Get a quote
+          </Link>
+          <MobileNav />
+        </div>
       </div>
     </header>
   )

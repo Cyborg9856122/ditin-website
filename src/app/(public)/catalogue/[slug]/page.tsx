@@ -63,11 +63,12 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
-      <nav className="text-sm text-neutral-500">
-        <Link href="/catalogue" className="hover:text-brand-green">
+      <nav className="flex items-center gap-1.5 text-sm text-neutral-500">
+        <Link href="/catalogue" className="transition hover:text-brand-green">
           Catalogue
-        </Link>{" "}
-        / <span className="text-neutral-700">{product.name}</span>
+        </Link>
+        <span className="text-neutral-300">/</span>
+        <span className="text-neutral-700">{product.name}</span>
       </nav>
 
       <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2">
@@ -85,13 +86,18 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
             ) : (
               <PixelPlaceholder />
             )}
+            {product.is_placeholder ? (
+              <span className="absolute left-3 top-3 rounded bg-white/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+                Sample
+              </span>
+            ) : null}
           </div>
           {images.length > 1 ? (
             <div className="mt-3 grid grid-cols-4 gap-3">
               {images.slice(1).map((image) => (
                 <div
                   key={image.id}
-                  className="relative aspect-square overflow-hidden rounded-md bg-neutral-100"
+                  className="relative aspect-square overflow-hidden rounded-md bg-neutral-100 transition hover:opacity-80"
                 >
                   <Image
                     src={getPublicImageUrl(supabase, image.storage_path)}
@@ -107,35 +113,43 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
         </div>
 
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-brand-green">
+          <p className="font-measured text-xs font-medium uppercase tracking-[0.2em] text-brand-green">
             {PRODUCT_CATEGORY_LABELS[product.category]}
           </p>
-          <h1 className="mt-1 text-3xl font-semibold text-brand-ink">{product.name}</h1>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-brand-ink sm:text-4xl">
+            {product.name}
+          </h1>
 
           {product.typical_use_case ? (
-            <p className="mt-3 text-neutral-600">{product.typical_use_case}</p>
+            <p className="mt-3 leading-relaxed text-neutral-600">{product.typical_use_case}</p>
           ) : null}
 
-          <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-neutral-200 pt-6 text-sm">
+          <dl className="mt-8 grid grid-cols-2 gap-3 border-t border-neutral-200 pt-6">
             {specs.map((spec) => (
-              <div key={spec.label}>
-                <dt className="text-neutral-500">{spec.label}</dt>
-                <dd className="mt-0.5 font-measured text-brand-ink">{spec.value}</dd>
+              <div key={spec.label} className="rounded-md bg-neutral-50 px-3.5 py-3">
+                <dt className="text-xs text-neutral-500">{spec.label}</dt>
+                <dd className="mt-0.5 font-measured text-sm text-brand-ink">{spec.value}</dd>
               </div>
             ))}
           </dl>
 
           <a
             href="#inquire"
-            className="mt-8 inline-block rounded-md bg-brand-green px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            className="mt-8 inline-block rounded-md bg-brand-green px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:opacity-90"
           >
             Ask about this
           </a>
         </div>
       </div>
 
-      <section id="inquire" className="mx-auto mt-16 max-w-2xl scroll-mt-20 border-t border-neutral-200 pt-10">
-        <h2 className="text-2xl font-semibold text-brand-ink">Ask about this screen</h2>
+      <section
+        id="inquire"
+        className="mx-auto mt-20 max-w-2xl scroll-mt-20 border-t border-neutral-200 pt-12"
+      >
+        <p className="font-measured text-xs uppercase tracking-[0.25em] text-brand-green">
+          Next step
+        </p>
+        <h2 className="mt-2 text-2xl font-semibold text-brand-ink">Ask about this screen</h2>
         <p className="mt-2 text-neutral-600">
           We&apos;ll follow up with pricing and availability.
         </p>

@@ -159,7 +159,7 @@ export function InquiryForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 self-start rounded-md bg-brand-green px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+        className="mt-2 self-start rounded-md bg-brand-green px-7 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:opacity-90 disabled:pointer-events-none disabled:opacity-60"
       >
         {pending ? "Sending…" : "Send inquiry"}
       </button>
@@ -168,7 +168,7 @@ export function InquiryForm({
 }
 
 const inputClass =
-  "rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+  "rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-brand-green focus:ring-1 focus:ring-brand-green"
 
 function Field({
   label,

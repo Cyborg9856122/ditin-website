@@ -8,6 +8,8 @@ import {
   type ProductStatus,
 } from "@/lib/domain/types"
 import { permissions } from "@/lib/domain/auth/permissions"
+import { deleteProductAction } from "./actions"
+import { DeleteProductButton } from "./delete-button"
 
 export const metadata = { title: "Products" }
 
@@ -24,26 +26,38 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
   if (!profile) return null
 
   const canEdit = permissions.canEditProducts(profile.role)
+  const published = products.filter((p) => p.status === "published").length
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-brand-ink">Products</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-brand-ink">Products</h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            {products.length} total · {published} published
+          </p>
+        </div>
         {canEdit ? (
           <Link
             href="/admin/products/new"
-            className="rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+            className="inline-flex items-center gap-1.5 rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
           >
+            <span aria-hidden className="text-base leading-none">
+              +
+            </span>
             New product
           </Link>
         ) : null}
       </div>
 
-      <form className="mt-6 flex flex-wrap gap-3 text-sm" method="get">
+      <form
+        className="mt-6 flex flex-wrap items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3 text-sm"
+        method="get"
+      >
         <select
           name="status"
           defaultValue={status ?? ""}
-          className="rounded-md border border-neutral-300 px-3 py-1.5"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 outline-none focus:border-brand-green"
         >
           <option value="">All statuses</option>
           <option value="draft">Draft</option>
@@ -52,7 +66,7 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
         <select
           name="category"
           defaultValue={category ?? ""}
-          className="rounded-md border border-neutral-300 px-3 py-1.5"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 outline-none focus:border-brand-green"
         >
           <option value="">All categories</option>
           {Object.entries(PRODUCT_CATEGORY_LABELS).map(([value, label]) => (
@@ -63,32 +77,52 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
         </select>
         <button
           type="submit"
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700 hover:bg-neutral-100"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700 transition hover:bg-neutral-100"
         >
           Filter
         </button>
+        {status || category ? (
+          <Link
+            href="/admin/products"
+            className="text-neutral-500 underline underline-offset-2"
+          >
+            Clear
+          </Link>
+        ) : null}
       </form>
 
       <div className="mt-6 overflow-hidden rounded-lg border border-neutral-200 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-neutral-200 bg-neutral-50 text-neutral-500">
             <tr>
-              <th className="px-4 py-2 font-medium">Name</th>
-              <th className="px-4 py-2 font-medium">Category</th>
-              <th className="px-4 py-2 font-medium">Availability</th>
-              <th className="px-4 py-2 font-medium">Status</th>
+              <th className="px-4 py-2.5 font-medium">Name</th>
+              <th className="px-4 py-2.5 font-medium">Category</th>
+              <th className="px-4 py-2.5 font-medium">Availability</th>
+              <th className="px-4 py-2.5 font-medium">Status</th>
+              {canEdit ? <th className="px-4 py-2.5" /> : null}
             </tr>
           </thead>
           <tbody>
             {products.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-neutral-400">
-                  No products yet.
+                <td colSpan={canEdit ? 5 : 4} className="px-4 py-12 text-center text-neutral-400">
+                  <p>No products yet.</p>
+                  {canEdit ? (
+                    <Link
+                      href="/admin/products/new"
+                      className="mt-2 inline-block text-sm font-medium text-brand-green hover:underline"
+                    >
+                      Create your first one →
+                    </Link>
+                  ) : null}
                 </td>
               </tr>
             ) : (
               products.map((product) => (
-                <tr key={product.id} className="border-b border-neutral-100 last:border-0">
+                <tr
+                  key={product.id}
+                  className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50/60"
+                >
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/products/${product.id}`}
@@ -106,6 +140,14 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
                   <td className="px-4 py-3">
                     <StatusBadge status={product.status} />
                   </td>
+                  {canEdit ? (
+                    <td className="px-4 py-3 text-right">
+                      <DeleteProductButton
+                        action={deleteProductAction.bind(null, product.id)}
+                        productName={product.name}
+                      />
+                    </td>
+                  ) : null}
                 </tr>
               ))
             )}

@@ -1,11 +1,9 @@
-import Image from "next/image"
 import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/data-access/supabase/server"
 import { getCurrentProfile } from "@/lib/data-access/repositories/profile-repository"
-import { ROLE_LABELS } from "@/lib/domain/auth/permissions"
-import { brand } from "@/lib/config/brand"
 import { signOut } from "../actions"
-import { AdminNav } from "./admin-nav"
+import { AdminSidebar } from "./admin-sidebar"
+import { AdminMobileBar } from "./admin-mobile-bar"
 
 // Guards every route under /admin except /admin/login (which lives outside
 // this route group). The proxy (middleware) already redirects signed-out
@@ -22,39 +20,12 @@ export default async function ProtectedAdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-1 flex-col bg-neutral-50">
-      <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/brand/ditin-displays-primary.png"
-            alt={brand.logo.fullName}
-            width={220}
-            height={94}
-            priority
-            className="h-8 w-auto"
-          />
-          <span className="h-5 w-px bg-neutral-200" />
-          <p className="text-sm text-neutral-500">Admin</p>
-        </div>
-        <div className="flex items-center gap-4 text-sm">
-          <span className="text-neutral-600">
-            {profile.full_name || "Signed in"} ·{" "}
-            <span className="font-medium text-brand-ink">
-              {ROLE_LABELS[profile.role]}
-            </span>
-          </span>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm text-neutral-700 transition hover:bg-neutral-100"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
-      </header>
-      <AdminNav role={profile.role} />
-      <main className="flex-1 px-6 py-8">{children}</main>
+    <div className="flex min-h-screen bg-neutral-50">
+      <AdminSidebar role={profile.role} fullName={profile.full_name} onSignOut={signOut} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <AdminMobileBar role={profile.role} onSignOut={signOut} />
+        <main className="flex-1 px-4 py-6 sm:px-8 sm:py-8">{children}</main>
+      </div>
     </div>
   )
 }

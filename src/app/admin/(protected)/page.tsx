@@ -26,14 +26,14 @@ export default async function AdminDashboardPage() {
   const published = products.filter((p) => p.status === "published").length
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="max-w-3xl">
       <h1 className="text-2xl font-semibold text-brand-ink">Welcome</h1>
       <p className="mt-2 text-neutral-600">
         You&apos;re signed in as <strong>{ROLE_LABELS[profile.role]}</strong>.{" "}
         {ROLE_DESCRIPTIONS[profile.role]}
       </p>
 
-      <div className="mt-6 grid grid-cols-2 gap-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/admin/products"
           className="rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-brand-green"

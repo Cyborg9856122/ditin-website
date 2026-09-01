@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { brand } from "@/lib/config/brand"
 import { createSupabaseBrowserClient } from "@/lib/data-access/supabase/client"
 
 export default function ResetPasswordPage() {
@@ -46,10 +48,17 @@ export default function ResetPasswordPage() {
   return (
     <main className="flex min-h-screen flex-1 items-center justify-center bg-neutral-50 px-6">
       <div className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-8 shadow-sm">
-        <p className="font-measured text-xs uppercase tracking-[0.3em] text-brand-green">
-          Ditin Displays
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold text-brand-ink">Set a new password</h1>
+        <Image
+          src="/brand/ditin-displays-primary.png"
+          alt={brand.logo.fullName}
+          width={220}
+          height={94}
+          priority
+          className="mx-auto h-12 w-auto"
+        />
+        <h1 className="mt-5 text-center text-2xl font-semibold text-brand-ink">
+          Set a new password
+        </h1>
 
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">

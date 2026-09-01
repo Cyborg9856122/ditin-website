@@ -1,7 +1,9 @@
+import Image from "next/image"
 import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/data-access/supabase/server"
 import { getCurrentProfile } from "@/lib/data-access/repositories/profile-repository"
 import { ROLE_LABELS } from "@/lib/domain/auth/permissions"
+import { brand } from "@/lib/config/brand"
 import { signOut } from "../actions"
 import { AdminNav } from "./admin-nav"
 
@@ -22,10 +24,16 @@ export default async function ProtectedAdminLayout({
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-neutral-50">
       <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4">
-        <div>
-          <p className="font-measured text-xs uppercase tracking-[0.3em] text-brand-green">
-            Ditin Displays
-          </p>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/brand/ditin-displays-primary.png"
+            alt={brand.logo.fullName}
+            width={220}
+            height={94}
+            priority
+            className="h-8 w-auto"
+          />
+          <span className="h-5 w-px bg-neutral-200" />
           <p className="text-sm text-neutral-500">Admin</p>
         </div>
         <div className="flex items-center gap-4 text-sm">

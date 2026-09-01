@@ -20,9 +20,9 @@ export default async function LoginPage(props: PageProps<"/admin/login">) {
           width={220}
           height={94}
           priority
-          className="h-12 w-auto"
+          className="mx-auto h-12 w-auto"
         />
-        <h1 className="mt-5 text-2xl font-semibold text-brand-ink">
+        <h1 className="mt-5 text-center text-2xl font-semibold text-brand-ink">
           Admin sign in
         </h1>
         <LoginForm next={next} />

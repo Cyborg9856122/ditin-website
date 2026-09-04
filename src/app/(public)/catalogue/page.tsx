@@ -6,10 +6,8 @@ import {
   listPrimaryImagesForProducts,
 } from "@/lib/data-access/repositories/product-image-repository"
 import {
-  AVAILABILITY_LABELS,
   PLACEMENT_LABELS,
   PRODUCT_CATEGORY_LABELS,
-  type Availability,
   type Placement,
   type ProductCategory,
 } from "@/lib/domain/types"
@@ -23,7 +21,6 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
   const searchParams = await props.searchParams
   const category = asOne(searchParams.category) as ProductCategory | undefined
   const placement = asOne(searchParams.placement) as Placement | undefined
-  const availability = asOne(searchParams.availability) as Availability | undefined
   const search = asOne(searchParams.q)
 
   const supabase = await createSupabaseServerClient()
@@ -31,7 +28,6 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
     status: "published",
     category,
     placement,
-    availability,
     search,
   })
 
@@ -40,7 +36,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
     products.map((p) => p.id),
   )
 
-  const filterCount = [category, placement, availability, search].filter(Boolean).length
+  const filterCount = [category, placement, search].filter(Boolean).length
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
@@ -73,23 +69,12 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
         </select>
         <select
           name="placement"
+          aria-label="Usage"
           defaultValue={placement ?? ""}
           className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 outline-none focus:border-brand-green"
         >
-          <option value="">Indoor or outdoor</option>
+          <option value="">Usage</option>
           {Object.entries(PLACEMENT_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <select
-          name="availability"
-          defaultValue={availability ?? ""}
-          className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 outline-none focus:border-brand-green"
-        >
-          <option value="">Rent or buy</option>
-          {Object.entries(AVAILABILITY_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
             </option>

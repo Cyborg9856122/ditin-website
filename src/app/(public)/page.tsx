@@ -2,6 +2,7 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 import { PRODUCT_CATEGORY_LABELS, type ProductCategory } from "@/lib/domain/types"
 import { PixelPitchCalculator } from "@/components/pixel-pitch-calculator"
+import { HeroGlow } from "@/components/hero-glow"
 
 const CATEGORY_BLURBS: Record<ProductCategory, string> = {
   led_wall: "Modular, seamless, built for stages and storefronts.",
@@ -106,6 +107,7 @@ export default function HomePage() {
     <main className="overflow-hidden">
       <section className="relative bg-brand-ink px-6 py-24 text-center text-white sm:py-32">
         <div className="bg-pixel-grid absolute inset-0 opacity-40" />
+        <HeroGlow />
         <div
           aria-hidden
           className="animate-float-slow absolute -left-24 top-10 h-72 w-72 rounded-full bg-brand-green/20 blur-3xl"
@@ -116,10 +118,7 @@ export default function HomePage() {
         />
 
         <div className="relative mx-auto max-w-3xl">
-          <p className="animate-fade-in-up font-measured text-xs uppercase tracking-[0.3em] text-brand-green">
-            Ditin Displays
-          </p>
-          <h1 className="animate-fade-in-up delay-100 mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">
+          <h1 className="animate-fade-in-up mt-5 text-4xl font-semibold tracking-tight sm:text-6xl">
             Every screen we sell and rent, in one place —
             <span className="text-brand-green"> browse it yourself.</span>
           </h1>

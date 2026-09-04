@@ -27,7 +27,7 @@ export function ProductCard({
             alt={product.name}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 100vw"
-            className="object-cover transition duration-300 group-hover:scale-105"
+            className="object-contain p-4 transition duration-300 group-hover:scale-105"
           />
         ) : (
           <PixelPlaceholder label="Sample item" />

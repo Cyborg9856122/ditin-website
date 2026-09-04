@@ -15,6 +15,8 @@ export type Profile = Tables<"profiles">
 export type Product = Tables<"products">
 export type ProductImage = Tables<"product_images">
 export type Inquiry = Tables<"inquiries">
+export type SpecField = Tables<"spec_fields">
+export type ProductSpecValue = Tables<"product_spec_values">
 
 export const PRODUCT_CATEGORY_LABELS: Record<ProductCategory, string> = {
   led_wall: "LED walls",

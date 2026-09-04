@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/data-access/supabase/server"
 import { getCurrentProfile } from "@/lib/data-access/repositories/profile-repository"
+import { listSpecFields } from "@/lib/data-access/repositories/spec-field-repository"
 import { permissions } from "@/lib/domain/auth/permissions"
 import { createProductAction } from "../actions"
 import { ProductForm } from "../product-form"
@@ -14,6 +15,8 @@ export default async function NewProductPage() {
     redirect("/admin/products")
   }
 
+  const specFields = await listSpecFields(supabase)
+
   return (
     <div>
       <h1 className="text-2xl font-semibold text-brand-ink">New product</h1>
@@ -21,7 +24,7 @@ export default async function NewProductPage() {
         Saved as a draft first — you can add photos and publish once it&apos;s ready.
       </p>
       <div className="mt-6">
-        <ProductForm action={createProductAction} />
+        <ProductForm specFields={specFields} action={createProductAction} />
       </div>
     </div>
   )

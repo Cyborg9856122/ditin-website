@@ -15,12 +15,16 @@ import {
 import {
   deleteProductImage,
   listImagesForProduct,
+  reorderProductImages,
   setPrimaryImage,
-  uploadProductImage,
 } from "@/lib/data-access/repositories/product-image-repository"
+import { setSpecValuesForProduct } from "@/lib/data-access/repositories/product-spec-value-repository"
+import { listSpecFields } from "@/lib/data-access/repositories/spec-field-repository"
 import { permissions } from "@/lib/domain/auth/permissions"
 import { productFormSchema } from "@/lib/domain/validation/product-schema"
 import { slugify } from "@/lib/domain/utils/slug"
+import type { SupabaseClient } from "@supabase/supabase-js"
+import type { Database } from "@/lib/data-access/supabase/database.types"
 
 export type ProductFormState = {
   error: string | null
@@ -47,6 +51,24 @@ async function requireEditor() {
 function parseForm(formData: FormData) {
   const raw = Object.fromEntries(formData.entries())
   return productFormSchema.safeParse(raw)
+}
+
+// Custom spec fields are rendered dynamically (one <input name="spec_<id>">
+// per admin-defined field), so they can't go through the static zod schema —
+// pull them out of the raw form data against the current field list instead.
+async function saveSpecValues(
+  supabase: SupabaseClient<Database>,
+  productId: string,
+  formData: FormData,
+) {
+  const fields = await listSpecFields(supabase)
+  if (fields.length === 0) return
+
+  const values: Record<string, string> = {}
+  for (const field of fields) {
+    values[field.id] = String(formData.get(`spec_${field.id}`) || "")
+  }
+  await setSpecValuesForProduct(supabase, productId, values)
 }
 
 export async function createProductAction(
@@ -76,6 +98,7 @@ export async function createProductAction(
     { ...parsed.data, slug },
     profile.id,
   )
+  await saveSpecValues(supabase, product.id, formData)
 
   revalidatePath("/admin/products")
   redirect(`/admin/products/${product.id}`)
@@ -105,6 +128,7 @@ export async function updateProductAction(
   }
 
   const updated = await updateProduct(supabase, productId, { ...parsed.data, slug }, profile.id)
+  await saveSpecValues(supabase, productId, formData)
 
   revalidatePath("/admin/products")
   revalidatePath(`/admin/products/${productId}`)
@@ -142,30 +166,6 @@ export async function deleteProductAction(productId: string) {
   redirect("/admin/products")
 }
 
-export async function uploadProductImageAction(productId: string, formData: FormData) {
-  const { supabase } = await requireEditor()
-  const file = formData.get("file")
-  if (!(file instanceof File) || file.size === 0) {
-    throw new Error("No file provided.")
-  }
-  if (!file.type.startsWith("image/")) {
-    throw new Error("Only image files are allowed.")
-  }
-  if (file.size > 8 * 1024 * 1024) {
-    throw new Error("Images must be 8MB or smaller.")
-  }
-
-  const existing = await listImagesForProduct(supabase, productId)
-  await uploadProductImage(supabase, productId, file, {
-    sortOrder: existing.length,
-    isPrimary: existing.length === 0,
-  })
-
-  revalidatePath(`/admin/products/${productId}`)
-  const product = await getProductById(supabase, productId)
-  if (product?.status === "published") revalidatePublic(product.slug)
-}
-
 export async function deleteProductImageAction(productId: string, imageId: string) {
   const { supabase } = await requireEditor()
   const images = await listImagesForProduct(supabase, productId)
@@ -191,6 +191,14 @@ export async function deleteProductImageAction(productId: string, imageId: strin
 export async function setPrimaryImageAction(productId: string, imageId: string) {
   const { supabase } = await requireEditor()
   await setPrimaryImage(supabase, productId, imageId)
+  revalidatePath(`/admin/products/${productId}`)
+  const product = await getProductById(supabase, productId)
+  if (product?.status === "published") revalidatePublic(product.slug)
+}
+
+export async function reorderProductImagesAction(productId: string, orderedImageIds: string[]) {
+  const { supabase } = await requireEditor()
+  await reorderProductImages(supabase, productId, orderedImageIds)
   revalidatePath(`/admin/products/${productId}`)
   const product = await getProductById(supabase, productId)
   if (product?.status === "published") revalidatePublic(product.slug)

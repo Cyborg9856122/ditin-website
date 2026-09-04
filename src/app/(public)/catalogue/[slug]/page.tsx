@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation"
-import Image from "next/image"
 import Link from "next/link"
 import { createSupabaseServerClient } from "@/lib/data-access/supabase/server"
 import { createSupabasePublicClient } from "@/lib/data-access/supabase/public"
@@ -11,13 +10,15 @@ import {
   getPublicImageUrl,
   listImagesForProduct,
 } from "@/lib/data-access/repositories/product-image-repository"
+import { getSpecValuesForProduct } from "@/lib/data-access/repositories/product-spec-value-repository"
+import { listSpecFields } from "@/lib/data-access/repositories/spec-field-repository"
 import {
   AVAILABILITY_LABELS,
   PLACEMENT_LABELS,
   PRODUCT_CATEGORY_LABELS,
 } from "@/lib/domain/types"
 import { InquiryForm } from "../../inquire/inquiry-form"
-import { PixelPlaceholder } from "@/components/pixel-placeholder"
+import { ProductGallery } from "@/components/product-gallery"
 import { PixelPitchCalculator } from "@/components/pixel-pitch-calculator"
 import { brand } from "@/lib/config/brand"
 
@@ -51,7 +52,24 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
   const product = await getPublishedProductBySlug(supabase, slug)
   if (!product) notFound()
 
-  const images = await listImagesForProduct(supabase, product.id)
+  const [images, specFields, specValues] = await Promise.all([
+    listImagesForProduct(supabase, product.id),
+    listSpecFields(supabase),
+    getSpecValuesForProduct(supabase, product.id),
+  ])
+  const galleryImages = images.map((image) => ({
+    id: image.id,
+    url: getPublicImageUrl(supabase, image.storage_path),
+    alt: image.alt_text ?? product.name,
+  }))
+
+  const customSpecs = specFields
+    .map((field) => {
+      const value = specValues.get(field.id)
+      if (!value) return null
+      return { label: field.label, value: field.unit ? `${value} ${field.unit}` : value }
+    })
+    .filter((s): s is { label: string; value: string } => s !== null)
 
   const specs = [
     { label: "Category", value: PRODUCT_CATEGORY_LABELS[product.category] },
@@ -61,6 +79,7 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
     product.panel_size ? { label: "Panel size", value: product.panel_size } : null,
     product.brightness_nits ? { label: "Brightness", value: `${product.brightness_nits} nits` } : null,
     product.resolution ? { label: "Resolution", value: product.resolution } : null,
+    ...customSpecs,
   ].filter((s): s is { label: string; value: string } => s !== null)
 
   return (
@@ -75,43 +94,7 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
 
       <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2">
         <div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-neutral-100">
-            {images[0] ? (
-              <Image
-                src={getPublicImageUrl(supabase, images[0].storage_path)}
-                alt={images[0].alt_text ?? product.name}
-                fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                priority
-                className="object-cover"
-              />
-            ) : (
-              <PixelPlaceholder />
-            )}
-            {product.is_placeholder ? (
-              <span className="absolute left-3 top-3 rounded bg-white/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
-                Sample
-              </span>
-            ) : null}
-          </div>
-          {images.length > 1 ? (
-            <div className="mt-3 grid grid-cols-4 gap-3">
-              {images.slice(1).map((image) => (
-                <div
-                  key={image.id}
-                  className="relative aspect-square overflow-hidden rounded-md bg-neutral-100 transition hover:opacity-80"
-                >
-                  <Image
-                    src={getPublicImageUrl(supabase, image.storage_path)}
-                    alt={image.alt_text ?? product.name}
-                    fill
-                    sizes="150px"
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          ) : null}
+          <ProductGallery images={galleryImages} isPlaceholder={product.is_placeholder} />
         </div>
 
         <div>

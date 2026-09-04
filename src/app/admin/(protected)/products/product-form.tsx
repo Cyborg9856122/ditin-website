@@ -6,6 +6,7 @@ import {
   PLACEMENT_LABELS,
   PRODUCT_CATEGORY_LABELS,
   type Product,
+  type SpecField,
 } from "@/lib/domain/types"
 import type { ProductFormState } from "./actions"
 
@@ -13,9 +14,13 @@ const initialState: ProductFormState = { error: null }
 
 export function ProductForm({
   product,
+  specFields = [],
+  specValues,
   action,
 }: {
   product?: Product
+  specFields?: SpecField[]
+  specValues?: Map<string, string>
   action: (prevState: ProductFormState, formData: FormData) => Promise<ProductFormState>
 }) {
   const [state, formAction, pending] = useActionState(action, initialState)
@@ -176,6 +181,28 @@ export function ProductForm({
           />
         </Field>
       </FormSection>
+
+      {specFields.length > 0 ? (
+        <FormSection
+          title="Custom specifications"
+          description="Managed under Settings. Leave blank to hide a spec on the public page."
+        >
+          {specFields.map((field) => (
+            <Field
+              key={field.id}
+              label={field.unit ? `${field.label} (${field.unit})` : field.label}
+              htmlFor={`spec_${field.id}`}
+            >
+              <input
+                id={`spec_${field.id}`}
+                name={`spec_${field.id}`}
+                defaultValue={specValues?.get(field.id) ?? ""}
+                className={inputClass}
+              />
+            </Field>
+          ))}
+        </FormSection>
+      ) : null}
 
       <button
         type="submit"

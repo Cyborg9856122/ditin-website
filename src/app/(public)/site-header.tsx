@@ -5,8 +5,8 @@ import { MobileNav } from "@/components/mobile-nav"
 
 const NAV_LINKS = [
   { href: "/catalogue", label: "Catalogue" },
-  { href: "/catalogue?availability=rent", label: "Rent" },
-  { href: "/catalogue?availability=buy", label: "Buy" },
+  { href: "/catalogue?placement=indoor", label: "Indoor" },
+  { href: "/catalogue?placement=outdoor", label: "Outdoor" },
   { href: "/inquire", label: "Contact" },
 ]
 

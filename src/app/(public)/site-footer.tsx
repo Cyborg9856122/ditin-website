@@ -60,6 +60,23 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
+                  href={`tel:${brand.contact.phone.replace(/\s+/g, "")}`}
+                  className="font-measured inline-flex items-center gap-2 transition hover:text-white"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5 shrink-0">
+                    <path
+                      d="M4.5 5.5c0-.55.45-1 1-1h2.2c.46 0 .86.32.97.77l.8 3.2a1 1 0 0 1-.27.96l-1.4 1.4a12.7 12.7 0 0 0 5.87 5.87l1.4-1.4a1 1 0 0 1 .96-.27l3.2.8c.45.11.77.51.77.97v2.2c0 .55-.45 1-1 1h-1.5C9.8 20 4 14.2 4 7V5.5Z"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  {brand.contact.phone}
+                </a>
+              </li>
+              <li>
+                <a
                   href={`mailto:${brand.contact.email}`}
                   className="inline-flex items-center gap-2 transition hover:text-white"
                 >

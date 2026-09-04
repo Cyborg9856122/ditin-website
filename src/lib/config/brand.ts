@@ -16,12 +16,11 @@ export const brand = {
     // the "Displays" wordmark (per brand kit handoff rules).
     tagline: "See Beyond the frame",
   },
-  // PLACEHOLDER CONTACT INFO — none of this was provided; replace with the
-  // real details before launch. Kept in one place so it's a single edit.
+  // Real business contact details. Kept in one place so it's a single edit.
   contact: {
-    whatsappNumber: "9647500000000", // digits only, no "+", used in wa.me links
-    whatsappDisplay: "+964 750 000 0000",
-    email: "hello@example.com",
-    phone: "+964 750 000 0000",
+    whatsappNumber: "9647503001865", // digits only, no "+", used in wa.me links
+    whatsappDisplay: "+964 750 300 1865",
+    email: "info@ditindisplays.com",
+    phone: "+964 750 300 1865",
   },
 } as const

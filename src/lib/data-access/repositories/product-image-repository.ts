@@ -103,6 +103,30 @@ export async function deleteProductImage(
   if (error) throw new Error(`deleteProductImage (row) failed: ${error.message}`)
 }
 
+/**
+ * Persists a full new ordering for a product's images in one call, used
+ * after an admin drags an image to a new position. `orderedImageIds` must
+ * contain every image id for the product, in the desired display order.
+ */
+export async function reorderProductImages(
+  supabase: SupabaseClient<Database>,
+  productId: string,
+  orderedImageIds: string[],
+): Promise<void> {
+  await Promise.all(
+    orderedImageIds.map((imageId, index) =>
+      supabase
+        .from("product_images")
+        .update({ sort_order: index })
+        .eq("id", imageId)
+        .eq("product_id", productId),
+    ),
+  ).then((results) => {
+    const failed = results.find((r) => r.error)
+    if (failed?.error) throw new Error(`reorderProductImages failed: ${failed.error.message}`)
+  })
+}
+
 export async function setPrimaryImage(
   supabase: SupabaseClient<Database>,
   productId: string,

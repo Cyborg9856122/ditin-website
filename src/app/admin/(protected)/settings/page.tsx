@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/data-access/supabase/server"
 import { getCurrentProfile } from "@/lib/data-access/repositories/profile-repository"
-import { listSpecFields } from "@/lib/data-access/repositories/spec-field-repository"
+import {
+  listSpecFieldOptionsForFields,
+  listSpecFields,
+} from "@/lib/data-access/repositories/spec-field-repository"
 import { permissions } from "@/lib/domain/auth/permissions"
 import { SpecFieldsManager } from "./spec-fields-manager"
 
@@ -14,7 +17,12 @@ export default async function SettingsPage() {
     redirect("/admin")
   }
 
-  const fields = await listSpecFields(supabase)
+  const fields = await listSpecFields(supabase, { includeArchived: true })
+  const optionsMap = await listSpecFieldOptionsForFields(
+    supabase,
+    fields.map((f) => f.id),
+  )
+  const optionsByField = Object.fromEntries(optionsMap)
 
   return (
     <div className="max-w-3xl">
@@ -23,15 +31,16 @@ export default async function SettingsPage() {
 
       <section className="mt-8">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
-          Specification fields
+          Product specifications
         </h2>
         <p className="mt-1 text-sm text-neutral-500">
-          These show up automatically on every product&apos;s edit form, and on the public
-          product page for any product where they have a value. Fields left blank on a product
-          are hidden there entirely.
+          One shared library of specification fields — every field works the same way,
+          whatever its type. They show up automatically on the product edit form, and on the
+          public product page for any product where they have a value. Archive a field to
+          retire it without losing the values already saved on products.
         </p>
         <div className="mt-4">
-          <SpecFieldsManager fields={fields} />
+          <SpecFieldsManager fields={fields} optionsByField={optionsByField} />
         </div>
       </section>
     </div>

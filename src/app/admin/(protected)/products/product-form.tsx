@@ -7,6 +7,7 @@ import {
   PRODUCT_CATEGORY_LABELS,
   type Product,
   type SpecField,
+  type SpecFieldOption,
 } from "@/lib/domain/types"
 import type { ProductFormState } from "./actions"
 
@@ -16,11 +17,13 @@ export function ProductForm({
   product,
   specFields = [],
   specValues,
+  specFieldOptions = {},
   action,
 }: {
   product?: Product
   specFields?: SpecField[]
   specValues?: Map<string, string>
+  specFieldOptions?: Record<string, SpecFieldOption[]>
   action: (prevState: ProductFormState, formData: FormData) => Promise<ProductFormState>
 }) {
   const [state, formAction, pending] = useActionState(action, initialState)
@@ -45,21 +48,6 @@ export function ProductForm({
             defaultValue={product?.name}
             required
             className={inputClass}
-          />
-        </Field>
-
-        <Field
-          label="URL slug"
-          htmlFor="slug"
-          hint="Leave blank to generate automatically from the name."
-          error={err("slug")}
-        >
-          <input
-            id="slug"
-            name="slug"
-            defaultValue={product?.slug}
-            placeholder="auto-generated-from-name"
-            className={`${inputClass} font-measured`}
           />
         </Field>
 
@@ -111,65 +99,6 @@ export function ProductForm({
         </Field>
       </FormSection>
 
-      <FormSection title="Specs" description="Only fill in what applies to this product.">
-        <div className="grid grid-cols-2 gap-4">
-          <Field
-            label="Pixel pitch (mm)"
-            htmlFor="pixel_pitch_mm"
-            hint="LED products only, e.g. 2.5"
-            error={err("pixel_pitch_mm")}
-          >
-            <input
-              id="pixel_pitch_mm"
-              name="pixel_pitch_mm"
-              type="number"
-              step="0.1"
-              min="1"
-              max="10"
-              defaultValue={product?.pixel_pitch_mm ?? ""}
-              className={`${inputClass} font-measured`}
-            />
-          </Field>
-
-          <Field
-            label="Panel size"
-            htmlFor="panel_size"
-            hint='LCD/commercial screens, e.g. 55"'
-            error={err("panel_size")}
-          >
-            <input
-              id="panel_size"
-              name="panel_size"
-              defaultValue={product?.panel_size ?? ""}
-              className={`${inputClass} font-measured`}
-            />
-          </Field>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Brightness (nits)" htmlFor="brightness_nits" error={err("brightness_nits")}>
-            <input
-              id="brightness_nits"
-              name="brightness_nits"
-              type="number"
-              min="1"
-              defaultValue={product?.brightness_nits ?? ""}
-              className={`${inputClass} font-measured`}
-            />
-          </Field>
-
-          <Field label="Resolution" htmlFor="resolution" error={err("resolution")}>
-            <input
-              id="resolution"
-              name="resolution"
-              placeholder="e.g. 1920x1080"
-              defaultValue={product?.resolution ?? ""}
-              className={`${inputClass} font-measured`}
-            />
-          </Field>
-        </div>
-      </FormSection>
-
       <FormSection title="Description" description="Shown on the product's public page.">
         <Field label="Typical use case" htmlFor="typical_use_case" error={err("typical_use_case")}>
           <textarea
@@ -184,22 +113,16 @@ export function ProductForm({
 
       {specFields.length > 0 ? (
         <FormSection
-          title="Custom specifications"
+          title="Specifications"
           description="Managed under Settings. Leave blank to hide a spec on the public page."
         >
           {specFields.map((field) => (
-            <Field
+            <SpecFieldInput
               key={field.id}
-              label={field.unit ? `${field.label} (${field.unit})` : field.label}
-              htmlFor={`spec_${field.id}`}
-            >
-              <input
-                id={`spec_${field.id}`}
-                name={`spec_${field.id}`}
-                defaultValue={specValues?.get(field.id) ?? ""}
-                className={inputClass}
-              />
-            </Field>
+              field={field}
+              options={specFieldOptions[field.id] ?? []}
+              value={specValues?.get(field.id) ?? ""}
+            />
           ))}
         </FormSection>
       ) : null}
@@ -207,11 +130,116 @@ export function ProductForm({
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-md bg-brand-green px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+        className="tap-target cursor-pointer self-start rounded-md bg-brand-green px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0 active:opacity-100 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {pending ? "Saving…" : product ? "Save changes" : "Create product"}
       </button>
     </form>
+  )
+}
+
+function SpecFieldInput({
+  field,
+  options,
+  value,
+}: {
+  field: SpecField
+  options: SpecFieldOption[]
+  value: string
+}) {
+  const name = `spec_${field.id}`
+  const label = field.unit ? `${field.label} (${field.unit})` : field.label
+
+  if (field.field_type === "boolean") {
+    return (
+      <div className="flex items-center justify-between gap-3 py-1">
+        <label htmlFor={name} className="text-sm font-medium text-brand-ink">
+          {label}
+        </label>
+        <ToggleInput name={name} defaultChecked={value === "true"} />
+      </div>
+    )
+  }
+
+  if (field.field_type === "dropdown") {
+    return (
+      <Field label={label} htmlFor={name}>
+        <select id={name} name={name} defaultValue={value} className={inputClass}>
+          <option value="">—</option>
+          {options.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </Field>
+    )
+  }
+
+  if (field.field_type === "multiselect") {
+    const selected = new Set(value ? value.split(",") : [])
+    return (
+      <Field label={label} htmlFor={name}>
+        <div className="flex flex-wrap gap-x-4 gap-y-2 rounded-md border border-neutral-300 px-3 py-2">
+          {options.length === 0 ? (
+            <p className="text-xs text-neutral-400">No options configured yet.</p>
+          ) : (
+            options.map((option) => (
+              <label
+                key={option.id}
+                className="flex cursor-pointer items-center gap-1.5 text-sm text-neutral-700"
+              >
+                <input
+                  type="checkbox"
+                  name={name}
+                  value={option.id}
+                  defaultChecked={selected.has(option.id)}
+                  className="h-3.5 w-3.5 cursor-pointer accent-brand-green"
+                />
+                {option.label}
+              </label>
+            ))
+          )}
+        </div>
+      </Field>
+    )
+  }
+
+  if (field.field_type === "number") {
+    return (
+      <Field label={label} htmlFor={name}>
+        <input
+          id={name}
+          name={name}
+          type="number"
+          step="any"
+          defaultValue={value}
+          className={`${inputClass} font-measured`}
+        />
+      </Field>
+    )
+  }
+
+  return (
+    <Field label={label} htmlFor={name}>
+      <input id={name} name={name} defaultValue={value} className={inputClass} />
+    </Field>
+  )
+}
+
+function ToggleInput({ name, defaultChecked }: { name: string; defaultChecked: boolean }) {
+  return (
+    <label className="group relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center">
+      <input
+        type="checkbox"
+        name={name}
+        value="true"
+        defaultChecked={defaultChecked}
+        className="peer sr-only"
+      />
+      <span className="absolute inset-0 rounded-full bg-neutral-300 transition-colors duration-150 peer-checked:bg-brand-green peer-focus-visible:ring-2 peer-focus-visible:ring-brand-green peer-focus-visible:ring-offset-2" />
+      <span className="relative h-4.5 w-4.5 translate-x-1 rounded-full bg-white shadow transition-transform duration-150 peer-checked:translate-x-6" />
+    </label>
   )
 }
 
@@ -236,7 +264,7 @@ function FormSection({
 }
 
 const inputClass =
-  "rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+  "rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-brand-green focus:ring-1 focus:ring-brand-green"
 
 function Field({
   label,

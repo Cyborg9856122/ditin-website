@@ -65,7 +65,7 @@ export default async function UsersPage() {
                       <form action={deleteUserAction.bind(null, p.id)}>
                         <button
                           type="submit"
-                          className="text-xs text-red-600 underline hover:no-underline"
+                          className="rounded px-1.5 py-0.5 text-xs text-red-600 underline transition-all duration-150 hover:bg-red-50 hover:no-underline active:scale-95"
                         >
                           Remove
                         </button>

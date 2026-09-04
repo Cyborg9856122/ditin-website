@@ -129,13 +129,13 @@ export default function HomePage() {
           <div className="animate-fade-in-up delay-300 mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/catalogue"
-              className="rounded-md bg-brand-green px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:opacity-90"
+              className="rounded-md bg-brand-green px-7 py-3.5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:opacity-100"
             >
               Browse the catalogue
             </Link>
             <Link
               href="/inquire"
-              className="rounded-md border border-white/25 px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10"
+              className="rounded-md border border-white/25 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-150 hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 active:bg-white/15"
             >
               Get a quote
             </Link>
@@ -217,7 +217,7 @@ export default function HomePage() {
                 <Link
                   key={value}
                   href={`/catalogue?category=${value}`}
-                  className="group rounded-lg border border-neutral-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10"
+                  className="group rounded-lg border border-neutral-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 active:translate-y-0 active:shadow-md"
                 >
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-brand-green/10 text-brand-green transition group-hover:bg-brand-green group-hover:text-white">
                     {CATEGORY_ICONS[value]}
@@ -240,7 +240,7 @@ export default function HomePage() {
           </h2>
         </div>
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div className="group relative overflow-hidden rounded-lg border border-neutral-200 p-8 transition duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10">
+          <div className="group relative overflow-hidden rounded-lg border border-neutral-200 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10">
             <div
               aria-hidden
               className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-brand-green/10 transition group-hover:scale-125"
@@ -257,12 +257,12 @@ export default function HomePage() {
             </p>
             <Link
               href="/catalogue?availability=rent"
-              className="relative mt-4 inline-block text-sm font-medium text-brand-green hover:underline"
+              className="relative mt-4 inline-block rounded px-1 py-0.5 -mx-1 text-sm font-medium text-brand-green transition-all duration-150 hover:underline active:scale-95"
             >
               See rentable screens →
             </Link>
           </div>
-          <div className="group relative overflow-hidden rounded-lg border border-neutral-200 p-8 transition duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10">
+          <div className="group relative overflow-hidden rounded-lg border border-neutral-200 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10">
             <div
               aria-hidden
               className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-brand-accent/10 transition group-hover:scale-125"
@@ -279,7 +279,7 @@ export default function HomePage() {
             </p>
             <Link
               href="/catalogue?availability=buy"
-              className="relative mt-4 inline-block text-sm font-medium text-brand-green hover:underline"
+              className="relative mt-4 inline-block rounded px-1 py-0.5 -mx-1 text-sm font-medium text-brand-green transition-all duration-150 hover:underline active:scale-95"
             >
               See screens to buy →
             </Link>
@@ -300,11 +300,11 @@ export default function HomePage() {
           <div className="mt-10 divide-y divide-neutral-200 border-t border-neutral-200">
             {FAQS.map((faq) => (
               <details key={faq.q} className="group py-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-brand-ink marker:content-none">
+                <summary className="-mx-2 flex cursor-pointer list-none items-center justify-between gap-4 rounded-md px-2 text-sm font-semibold text-brand-ink transition-colors duration-150 marker:content-none hover:text-brand-green">
                   {faq.q}
                   <span
                     aria-hidden
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-neutral-300 text-neutral-500 transition group-open:rotate-45 group-open:border-brand-green group-open:text-brand-green"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-neutral-300 text-neutral-500 transition-transform duration-150 group-open:rotate-45 group-open:border-brand-green group-open:text-brand-green"
                   >
                     +
                   </span>
@@ -330,7 +330,7 @@ export default function HomePage() {
         </p>
         <Link
           href="/inquire"
-          className="mt-7 inline-block rounded-md bg-brand-green px-7 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:opacity-90"
+          className="mt-7 inline-block rounded-md bg-brand-green px-7 py-3.5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:opacity-100"
         >
           Send an inquiry
         </Link>

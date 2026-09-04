@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
                 name="email"
                 type="email"
                 required
-                className="rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+                className="rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green focus:ring-1 focus:ring-brand-green"
               />
             </div>
 
@@ -71,14 +71,17 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={status === "sending"}
-              className="mt-2 rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+              className="mt-2 rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0 active:opacity-100 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {status === "sending" ? "Sending…" : "Send reset link"}
             </button>
           </form>
         )}
 
-        <Link href="/admin/login" className="mt-6 block text-center text-sm text-neutral-500 underline">
+        <Link
+          href="/admin/login"
+          className="mt-6 block rounded px-1 py-0.5 text-center text-sm text-neutral-500 underline transition-all duration-150 hover:bg-neutral-100 hover:no-underline active:scale-95"
+        >
           Back to sign in
         </Link>
       </div>

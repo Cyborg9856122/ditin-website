@@ -36,7 +36,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/admin/products"
-          className="rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-brand-green"
+          className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-brand-green hover:shadow-md active:translate-y-0"
         >
           <p className="text-2xl font-semibold text-brand-ink">{products.length}</p>
           <p className="text-sm text-neutral-500">
@@ -47,7 +47,7 @@ export default async function AdminDashboardPage() {
         {inquiryCounts ? (
           <Link
             href="/admin/inquiries"
-            className="rounded-lg border border-neutral-200 bg-white p-5 transition hover:border-brand-green"
+            className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-brand-green hover:shadow-md active:translate-y-0"
           >
             <p className="text-2xl font-semibold text-brand-ink">{inquiryCounts.new}</p>
             <p className="text-sm text-neutral-500">

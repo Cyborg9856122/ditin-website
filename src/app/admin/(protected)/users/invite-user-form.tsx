@@ -32,7 +32,7 @@ export function InviteUserForm() {
               navigator.clipboard.writeText(state.created!.temporaryPassword)
               setCopied(true)
             }}
-            className="text-xs text-brand-green underline"
+            className="rounded px-1.5 py-0.5 text-xs text-brand-green underline transition-all duration-150 hover:bg-brand-green/10 hover:no-underline active:scale-95"
           >
             {copied ? "Copied" : "Copy"}
           </button>
@@ -40,7 +40,7 @@ export function InviteUserForm() {
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="mt-3 text-xs text-neutral-500 underline"
+          className="mt-3 rounded px-1.5 py-0.5 text-xs text-neutral-500 underline transition-all duration-150 hover:bg-neutral-100 hover:no-underline active:scale-95"
         >
           Invite another
         </button>
@@ -58,7 +58,7 @@ export function InviteUserForm() {
           id="fullName"
           name="fullName"
           required
-          className="rounded-md border border-neutral-300 px-3 py-1.5"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         />
         {state.fieldErrors?.fullName ? (
           <p className="text-xs text-red-600">{state.fieldErrors.fullName}</p>
@@ -74,7 +74,7 @@ export function InviteUserForm() {
           name="email"
           type="email"
           required
-          className="rounded-md border border-neutral-300 px-3 py-1.5"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         />
         {state.fieldErrors?.email ? (
           <p className="text-xs text-red-600">{state.fieldErrors.email}</p>
@@ -89,7 +89,7 @@ export function InviteUserForm() {
           id="role"
           name="role"
           defaultValue="viewer"
-          className="rounded-md border border-neutral-300 px-3 py-1.5"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         >
           {roles.map((r) => (
             <option key={r} value={r}>
@@ -102,7 +102,7 @@ export function InviteUserForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-brand-green px-4 py-1.5 font-semibold text-white hover:opacity-90 disabled:opacity-60"
+        className="rounded-md bg-brand-green px-4 py-1.5 font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0 active:opacity-100 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
       >
         {pending ? "Creating…" : "Create account"}
       </button>

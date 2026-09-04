@@ -11,7 +11,10 @@ import {
   listImagesForProduct,
 } from "@/lib/data-access/repositories/product-image-repository"
 import { getSpecValuesForProduct } from "@/lib/data-access/repositories/product-spec-value-repository"
-import { listSpecFields } from "@/lib/data-access/repositories/spec-field-repository"
+import {
+  listSpecFieldOptionsForFields,
+  listSpecFields,
+} from "@/lib/data-access/repositories/spec-field-repository"
 import {
   AVAILABILITY_LABELS,
   PLACEMENT_LABELS,
@@ -19,7 +22,6 @@ import {
 } from "@/lib/domain/types"
 import { InquiryForm } from "../../inquire/inquiry-form"
 import { ProductGallery } from "@/components/product-gallery"
-import { PixelPitchCalculator } from "@/components/pixel-pitch-calculator"
 import { brand } from "@/lib/config/brand"
 
 export const revalidate = 3600
@@ -57,6 +59,10 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
     listSpecFields(supabase),
     getSpecValuesForProduct(supabase, product.id),
   ])
+  const specFieldOptions = await listSpecFieldOptionsForFields(
+    supabase,
+    specFields.map((f) => f.id),
+  )
   const galleryImages = images.map((image) => ({
     id: image.id,
     url: getPublicImageUrl(supabase, image.storage_path),
@@ -65,9 +71,30 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
 
   const customSpecs = specFields
     .map((field) => {
-      const value = specValues.get(field.id)
-      if (!value) return null
-      return { label: field.label, value: field.unit ? `${value} ${field.unit}` : value }
+      const raw = specValues.get(field.id)
+      if (!raw) return null
+
+      const options = specFieldOptions.get(field.id) ?? []
+      let display: string
+
+      if (field.field_type === "boolean") {
+        display = raw === "true" ? "Yes" : "No"
+      } else if (field.field_type === "dropdown") {
+        const option = options.find((o) => o.id === raw)
+        if (!option) return null
+        display = option.label
+      } else if (field.field_type === "multiselect") {
+        const labels = raw
+          .split(",")
+          .map((id) => options.find((o) => o.id === id)?.label)
+          .filter((label): label is string => Boolean(label))
+        if (labels.length === 0) return null
+        display = labels.join(", ")
+      } else {
+        display = field.unit ? `${raw} ${field.unit}` : raw
+      }
+
+      return { label: field.label, value: display }
     })
     .filter((s): s is { label: string; value: string } => s !== null)
 
@@ -75,12 +102,8 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
     { label: "Category", value: PRODUCT_CATEGORY_LABELS[product.category] },
     { label: "Placement", value: PLACEMENT_LABELS[product.placement] },
     { label: "Availability", value: AVAILABILITY_LABELS[product.availability] },
-    product.pixel_pitch_mm ? { label: "Pixel pitch", value: `${product.pixel_pitch_mm} mm` } : null,
-    product.panel_size ? { label: "Panel size", value: product.panel_size } : null,
-    product.brightness_nits ? { label: "Brightness", value: `${product.brightness_nits} nits` } : null,
-    product.resolution ? { label: "Resolution", value: product.resolution } : null,
     ...customSpecs,
-  ].filter((s): s is { label: string; value: string } => s !== null)
+  ]
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-12">
@@ -94,7 +117,7 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
 
       <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-2">
         <div>
-          <ProductGallery images={galleryImages} isPlaceholder={product.is_placeholder} />
+          <ProductGallery images={galleryImages} />
         </div>
 
         <div>
@@ -117,15 +140,6 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
               </div>
             ))}
           </dl>
-
-          {product.pixel_pitch_mm ? (
-            <div className="mt-6">
-              <p className="mb-2 text-sm font-medium text-brand-ink">
-                Is this the right pitch for your space?
-              </p>
-              <PixelPitchCalculator initialPitchMm={product.pixel_pitch_mm} compact />
-            </div>
-          ) : null}
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a

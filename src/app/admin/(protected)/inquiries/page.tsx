@@ -31,7 +31,7 @@ export default async function InquiriesPage(props: PageProps<"/admin/inquiries">
         <select
           name="status"
           defaultValue={status ?? ""}
-          className="rounded-md border border-neutral-300 px-3 py-1.5"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         >
           <option value="">All statuses</option>
           {Object.entries(INQUIRY_STATUS_LABELS).map(([value, label]) => (
@@ -42,7 +42,7 @@ export default async function InquiriesPage(props: PageProps<"/admin/inquiries">
         </select>
         <button
           type="submit"
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700 hover:bg-neutral-100"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700 transition-all duration-150 hover:bg-neutral-100 active:scale-95"
         >
           Filter
         </button>
@@ -72,7 +72,7 @@ export default async function InquiriesPage(props: PageProps<"/admin/inquiries">
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/inquiries/${inquiry.id}`}
-                      className="font-medium text-brand-ink hover:text-brand-green"
+                      className="font-medium text-brand-ink transition-colors duration-150 hover:text-brand-green active:opacity-70"
                     >
                       {inquiry.name}
                     </Link>

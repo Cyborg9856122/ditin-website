@@ -162,18 +162,14 @@ export type Database = {
       products: {
         Row: {
           availability: Database["public"]["Enums"]["availability_type"]
-          brightness_nits: number | null
           category: Database["public"]["Enums"]["product_category"]
           created_at: string
           created_by: string | null
           id: string
           is_placeholder: boolean
           name: string
-          panel_size: string | null
-          pixel_pitch_mm: number | null
           placement: Database["public"]["Enums"]["placement_type"]
           published_at: string | null
-          resolution: string | null
           slug: string
           status: Database["public"]["Enums"]["product_status"]
           typical_use_case: string | null
@@ -182,18 +178,14 @@ export type Database = {
         }
         Insert: {
           availability: Database["public"]["Enums"]["availability_type"]
-          brightness_nits?: number | null
           category: Database["public"]["Enums"]["product_category"]
           created_at?: string
           created_by?: string | null
           id?: string
           is_placeholder?: boolean
           name: string
-          panel_size?: string | null
-          pixel_pitch_mm?: number | null
           placement: Database["public"]["Enums"]["placement_type"]
           published_at?: string | null
-          resolution?: string | null
           slug: string
           status?: Database["public"]["Enums"]["product_status"]
           typical_use_case?: string | null
@@ -202,18 +194,14 @@ export type Database = {
         }
         Update: {
           availability?: Database["public"]["Enums"]["availability_type"]
-          brightness_nits?: number | null
           category?: Database["public"]["Enums"]["product_category"]
           created_at?: string
           created_by?: string | null
           id?: string
           is_placeholder?: boolean
           name?: string
-          panel_size?: string | null
-          pixel_pitch_mm?: number | null
           placement?: Database["public"]["Enums"]["placement_type"]
           published_at?: string | null
-          resolution?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["product_status"]
           typical_use_case?: string | null
@@ -261,10 +249,45 @@ export type Database = {
         }
         Relationships: []
       }
-      spec_fields: {
+      spec_field_options: {
         Row: {
           created_at: string
           id: string
+          label: string
+          sort_order: number
+          spec_field_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          sort_order?: number
+          spec_field_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          sort_order?: number
+          spec_field_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spec_field_options_spec_field_id_fkey"
+            columns: ["spec_field_id"]
+            isOneToOne: false
+            referencedRelation: "spec_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spec_fields: {
+        Row: {
+          created_at: string
+          field_key: string | null
+          field_type: Database["public"]["Enums"]["spec_field_type"]
+          id: string
+          is_archived: boolean
           label: string
           sort_order: number
           unit: string | null
@@ -272,7 +295,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          field_key?: string | null
+          field_type?: Database["public"]["Enums"]["spec_field_type"]
           id?: string
+          is_archived?: boolean
           label: string
           sort_order?: number
           unit?: string | null
@@ -280,7 +306,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          field_key?: string | null
+          field_type?: Database["public"]["Enums"]["spec_field_type"]
           id?: string
+          is_archived?: boolean
           label?: string
           sort_order?: number
           unit?: string | null
@@ -308,6 +337,12 @@ export type Database = {
         | "outdoor_weatherproof"
       product_status: "draft" | "published"
       rent_or_buy_choice: "rent" | "buy"
+      spec_field_type:
+        | "text"
+        | "number"
+        | "dropdown"
+        | "multiselect"
+        | "boolean"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -448,6 +483,7 @@ export const Constants = {
       ],
       product_status: ["draft", "published"],
       rent_or_buy_choice: ["rent", "buy"],
+      spec_field_type: ["text", "number", "dropdown", "multiselect", "boolean"],
     },
   },
 } as const

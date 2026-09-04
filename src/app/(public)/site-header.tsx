@@ -28,7 +28,11 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-8 text-sm font-medium text-brand-ink sm:flex">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="transition hover:text-brand-green">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="transition-colors duration-150 hover:text-brand-green active:opacity-70"
+            >
               {link.label}
             </Link>
           ))}
@@ -37,7 +41,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2 sm:gap-4">
           <Link
             href="/inquire"
-            className="rounded-md bg-brand-green px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90 sm:px-4 sm:text-sm"
+            className="rounded-md bg-brand-green px-3 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0 active:opacity-100 sm:px-4 sm:text-sm"
           >
             Get a quote
           </Link>

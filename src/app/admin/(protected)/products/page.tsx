@@ -40,7 +40,7 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
         {canEdit ? (
           <Link
             href="/admin/products/new"
-            className="inline-flex items-center gap-1.5 rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+            className="inline-flex items-center gap-1.5 rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0 active:opacity-100"
           >
             <span aria-hidden className="text-base leading-none">
               +
@@ -57,7 +57,7 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
         <select
           name="status"
           defaultValue={status ?? ""}
-          className="rounded-md border border-neutral-300 px-3 py-1.5 outline-none focus:border-brand-green"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         >
           <option value="">All statuses</option>
           <option value="draft">Draft</option>
@@ -66,7 +66,7 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
         <select
           name="category"
           defaultValue={category ?? ""}
-          className="rounded-md border border-neutral-300 px-3 py-1.5 outline-none focus:border-brand-green"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         >
           <option value="">All categories</option>
           {Object.entries(PRODUCT_CATEGORY_LABELS).map(([value, label]) => (
@@ -77,14 +77,14 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
         </select>
         <button
           type="submit"
-          className="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700 transition hover:bg-neutral-100"
+          className="rounded-md border border-neutral-300 px-3 py-1.5 text-neutral-700 transition-all duration-150 hover:bg-neutral-100 active:scale-95"
         >
           Filter
         </button>
         {status || category ? (
           <Link
             href="/admin/products"
-            className="text-neutral-500 underline underline-offset-2"
+            className="text-neutral-500 underline underline-offset-2 transition-colors duration-150 hover:text-brand-ink active:opacity-70"
           >
             Clear
           </Link>
@@ -110,7 +110,7 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
                   {canEdit ? (
                     <Link
                       href="/admin/products/new"
-                      className="mt-2 inline-block text-sm font-medium text-brand-green hover:underline"
+                      className="mt-2 inline-block rounded px-1 py-0.5 text-sm font-medium text-brand-green transition-all duration-150 hover:underline active:scale-95"
                     >
                       Create your first one →
                     </Link>
@@ -126,7 +126,7 @@ export default async function ProductsPage(props: PageProps<"/admin/products">) 
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/products/${product.id}`}
-                      className="font-medium text-brand-ink hover:text-brand-green"
+                      className="font-medium text-brand-ink transition-colors duration-150 hover:text-brand-green"
                     >
                       {product.name}
                     </Link>

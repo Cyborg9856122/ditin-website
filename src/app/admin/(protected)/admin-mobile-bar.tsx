@@ -31,7 +31,7 @@ export function AdminMobileBar({
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
-          className="relative flex h-9 w-9 items-center justify-center"
+          className="relative flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-150 hover:bg-neutral-100 active:scale-95"
         >
           <span
             className={`absolute h-0.5 w-5 rounded-full bg-brand-ink transition duration-300 ${
@@ -57,7 +57,7 @@ export function AdminMobileBar({
           <form action={onSignOut} className="mt-2 border-t border-neutral-100 pt-3">
             <button
               type="submit"
-              className="w-full rounded-md border border-neutral-200 px-3 py-2 text-left text-sm font-medium text-neutral-600 hover:bg-neutral-50"
+              className="w-full rounded-md border border-neutral-200 px-3 py-2 text-left text-sm font-medium text-neutral-600 transition-all duration-150 hover:bg-neutral-50 active:scale-[0.98]"
             >
               Sign out
             </button>

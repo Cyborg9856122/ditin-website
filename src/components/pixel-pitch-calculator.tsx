@@ -53,10 +53,10 @@ export function PixelPitchCalculator({
           <button
             type="button"
             onClick={() => setMode("byDistance")}
-            className={`rounded px-3.5 py-1.5 font-medium transition ${
+            className={`rounded px-3.5 py-1.5 font-medium transition-all duration-150 active:scale-95 ${
               mode === "byDistance"
                 ? "bg-white text-brand-ink shadow-sm"
-                : "text-neutral-500 hover:text-brand-ink"
+                : "text-neutral-500 hover:text-brand-ink hover:bg-white/60"
             }`}
           >
             I know my space
@@ -64,10 +64,10 @@ export function PixelPitchCalculator({
           <button
             type="button"
             onClick={() => setMode("byPitch")}
-            className={`rounded px-3.5 py-1.5 font-medium transition ${
+            className={`rounded px-3.5 py-1.5 font-medium transition-all duration-150 active:scale-95 ${
               mode === "byPitch"
                 ? "bg-white text-brand-ink shadow-sm"
-                : "text-neutral-500 hover:text-brand-ink"
+                : "text-neutral-500 hover:text-brand-ink hover:bg-white/60"
             }`}
           >
             I have a pixel pitch
@@ -89,7 +89,7 @@ export function PixelPitchCalculator({
               step={0.5}
               value={distance}
               onChange={(e) => setDistance(Number(e.target.value))}
-              className="h-1.5 flex-1 cursor-pointer accent-brand-green"
+              className="h-1.5 flex-1 cursor-pointer accent-brand-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2"
             />
             <span className="font-measured w-14 shrink-0 text-right text-sm font-semibold text-brand-ink">
               {fmt(distance)}m
@@ -123,7 +123,7 @@ export function PixelPitchCalculator({
               step={0.1}
               value={pitch}
               onChange={(e) => setPitch(Number(e.target.value))}
-              className="h-1.5 flex-1 cursor-pointer accent-brand-green"
+              className="h-1.5 flex-1 cursor-pointer accent-brand-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green focus-visible:ring-offset-2"
             />
             <span className="font-measured w-14 shrink-0 text-right text-sm font-semibold text-brand-ink">
               {fmt(pitch)}mm

@@ -96,7 +96,7 @@ function NavLinks({ role, onNavigate }: { role: Role; onNavigate?: () => void })
               key={link.href}
               href={link.href}
               onClick={onNavigate}
-              className={`flex items-center gap-3 rounded-md border-l-2 px-3 py-2.5 text-sm font-medium transition ${
+              className={`flex items-center gap-3 rounded-md border-l-2 px-3 py-2.5 text-sm font-medium transition-all duration-150 active:scale-[0.98] ${
                 active
                   ? "border-brand-green bg-brand-green/5 text-brand-ink"
                   : "border-transparent text-neutral-500 hover:bg-neutral-50 hover:text-brand-ink"
@@ -148,7 +148,7 @@ export function AdminSidebar({
         <form action={onSignOut} className="mt-3">
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:bg-neutral-50"
+            className="flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 transition-all duration-150 hover:bg-neutral-50 active:scale-95"
           >
             {ICONS.signOut}
             Sign out

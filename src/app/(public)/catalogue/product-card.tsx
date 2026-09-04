@@ -18,7 +18,7 @@ export function ProductCard({
   return (
     <Link
       href={`/catalogue/${product.slug}`}
-      className="group overflow-hidden rounded-lg border border-neutral-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10"
+      className="group overflow-hidden rounded-lg border border-neutral-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-brand-green hover:shadow-lg hover:shadow-brand-green/10 active:translate-y-0 active:shadow-md"
     >
       <div className="relative aspect-[4/3] bg-neutral-100">
         {imageUrl ? (
@@ -30,13 +30,8 @@ export function ProductCard({
             className="object-contain p-4 transition duration-300 group-hover:scale-105"
           />
         ) : (
-          <PixelPlaceholder label="Sample item" />
+          <PixelPlaceholder />
         )}
-        {product.is_placeholder ? (
-          <span className="absolute left-2 top-2 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
-            Sample
-          </span>
-        ) : null}
       </div>
       <div className="p-4">
         <p className="text-xs font-medium uppercase tracking-wide text-brand-green">

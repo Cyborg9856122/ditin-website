@@ -20,7 +20,8 @@ export function MobileNav() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label={open ? "Close menu" : "Open menu"}
-        className="relative flex h-9 w-9 items-center justify-center"
+        title={open ? "Close menu" : "Open menu"}
+        className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-150 hover:bg-neutral-100 active:scale-95"
       >
         <span
           className={`absolute h-0.5 w-5 rounded-full bg-brand-ink transition duration-300 ${
@@ -50,7 +51,7 @@ export function MobileNav() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="py-4 text-sm font-medium text-brand-ink transition hover:text-brand-green"
+              className="py-4 text-sm font-medium text-brand-ink transition-colors duration-150 hover:text-brand-green active:opacity-70"
             >
               {link.label}
             </Link>

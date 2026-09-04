@@ -16,7 +16,23 @@ export type Product = Tables<"products">
 export type ProductImage = Tables<"product_images">
 export type Inquiry = Tables<"inquiries">
 export type SpecField = Tables<"spec_fields">
+export type SpecFieldOption = Tables<"spec_field_options">
 export type ProductSpecValue = Tables<"product_spec_values">
+export type SpecFieldType = Enums<"spec_field_type">
+
+export const SPEC_FIELD_TYPE_LABELS: Record<SpecFieldType, string> = {
+  text: "Text",
+  number: "Number",
+  dropdown: "Dropdown (single choice)",
+  multiselect: "Multi-select",
+  boolean: "Yes / No toggle",
+}
+
+// Well-known field_key values the app relies on for more than generic
+// display. Kept in one place so nothing hardcodes the string elsewhere.
+export const SPEC_FIELD_KEYS = {
+  pixelPitchMm: "pixel_pitch_mm",
+} as const
 
 export const PRODUCT_CATEGORY_LABELS: Record<ProductCategory, string> = {
   led_wall: "LED walls",

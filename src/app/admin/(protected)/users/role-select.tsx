@@ -28,7 +28,7 @@ export function RoleSelect({
           updateUserRoleAction(userId, role)
         })
       }}
-      className="rounded-md border border-neutral-300 px-2 py-1 text-sm disabled:opacity-50"
+      className="rounded-md border border-neutral-300 px-2 py-1 text-sm transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green disabled:cursor-not-allowed disabled:opacity-50"
     >
       {roles.map((r) => (
         <option key={r} value={r}>

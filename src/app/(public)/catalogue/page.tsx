@@ -58,7 +58,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
         <select
           name="category"
           defaultValue={category ?? ""}
-          className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 outline-none focus:border-brand-green"
+          className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         >
           <option value="">All categories</option>
           {Object.entries(PRODUCT_CATEGORY_LABELS).map(([value, label]) => (
@@ -71,7 +71,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
           name="placement"
           aria-label="Usage"
           defaultValue={placement ?? ""}
-          className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 outline-none focus:border-brand-green"
+          className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green"
         >
           <option value="">Usage</option>
           {Object.entries(PLACEMENT_LABELS).map(([value, label]) => (
@@ -82,12 +82,15 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
         </select>
         <button
           type="submit"
-          className="rounded-md bg-brand-green px-4 py-1.5 font-semibold text-white transition hover:opacity-90"
+          className="rounded-md bg-brand-green px-4 py-1.5 font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0 active:opacity-100"
         >
           Filter
         </button>
         {filterCount > 0 ? (
-          <Link href="/catalogue" className="text-neutral-500 underline underline-offset-2">
+          <Link
+            href="/catalogue"
+            className="text-neutral-500 underline underline-offset-2 transition-colors duration-150 hover:text-brand-ink active:opacity-70"
+          >
             Clear filters
           </Link>
         ) : null}

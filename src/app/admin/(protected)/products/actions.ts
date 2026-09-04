@@ -7,8 +7,8 @@ import { getCurrentProfile } from "@/lib/data-access/repositories/profile-reposi
 import {
   createProduct,
   deleteProduct,
+  generateUniqueSlug,
   getProductById,
-  slugExists,
   setProductStatus,
   updateProduct,
 } from "@/lib/data-access/repositories/product-repository"
@@ -22,7 +22,6 @@ import { setSpecValuesForProduct } from "@/lib/data-access/repositories/product-
 import { listSpecFields } from "@/lib/data-access/repositories/spec-field-repository"
 import { permissions } from "@/lib/domain/auth/permissions"
 import { productFormSchema } from "@/lib/domain/validation/product-schema"
-import { slugify } from "@/lib/domain/utils/slug"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import type { Database } from "@/lib/data-access/supabase/database.types"
 
@@ -53,9 +52,10 @@ function parseForm(formData: FormData) {
   return productFormSchema.safeParse(raw)
 }
 
-// Custom spec fields are rendered dynamically (one <input name="spec_<id>">
-// per admin-defined field), so they can't go through the static zod schema —
-// pull them out of the raw form data against the current field list instead.
+// Spec fields are rendered dynamically (one or more inputs named
+// "spec_<id>" per field, shaped by the field's type), so they can't go
+// through the static zod schema — pull them out of the raw form data
+// against the current (non-archived) field list instead.
 async function saveSpecValues(
   supabase: SupabaseClient<Database>,
   productId: string,
@@ -66,7 +66,15 @@ async function saveSpecValues(
 
   const values: Record<string, string> = {}
   for (const field of fields) {
-    values[field.id] = String(formData.get(`spec_${field.id}`) || "")
+    const name = `spec_${field.id}`
+    if (field.field_type === "boolean") {
+      // Unchecked checkboxes don't submit at all — absence means "No".
+      values[field.id] = formData.get(name) ? "true" : "false"
+    } else if (field.field_type === "multiselect") {
+      values[field.id] = formData.getAll(name).map(String).join(",")
+    } else {
+      values[field.id] = String(formData.get(name) || "")
+    }
   }
   await setSpecValuesForProduct(supabase, productId, values)
 }
@@ -85,19 +93,8 @@ export async function createProductAction(
     }
   }
 
-  const slug = parsed.data.slug || slugify(parsed.data.name)
-  if (await slugExists(supabase, slug)) {
-    return {
-      error: "That URL slug is already used by another product.",
-      fieldErrors: { slug: "Already in use." },
-    }
-  }
-
-  const product = await createProduct(
-    supabase,
-    { ...parsed.data, slug },
-    profile.id,
-  )
+  const slug = await generateUniqueSlug(supabase, parsed.data.name)
+  const product = await createProduct(supabase, { ...parsed.data, slug }, profile.id)
   await saveSpecValues(supabase, product.id, formData)
 
   revalidatePath("/admin/products")
@@ -119,15 +116,10 @@ export async function updateProductAction(
     }
   }
 
-  const slug = parsed.data.slug || slugify(parsed.data.name)
-  if (await slugExists(supabase, slug, productId)) {
-    return {
-      error: "That URL slug is already used by another product.",
-      fieldErrors: { slug: "Already in use." },
-    }
-  }
-
-  const updated = await updateProduct(supabase, productId, { ...parsed.data, slug }, profile.id)
+  // The slug is never touched on update — it's set once at creation and
+  // stays stable so existing links to this product keep working even if
+  // the name changes later.
+  const updated = await updateProduct(supabase, productId, parsed.data, profile.id)
   await saveSpecValues(supabase, productId, formData)
 
   revalidatePath("/admin/products")

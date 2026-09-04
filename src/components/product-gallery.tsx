@@ -10,13 +10,7 @@ export type GalleryImage = {
   alt: string
 }
 
-export function ProductGallery({
-  images,
-  isPlaceholder,
-}: {
-  images: GalleryImage[]
-  isPlaceholder?: boolean
-}) {
+export function ProductGallery({ images }: { images: GalleryImage[] }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   return (
@@ -36,8 +30,8 @@ export function ProductGallery({
               type="button"
               onClick={() => setLightboxIndex(0)}
               aria-label="View full-screen image"
-              title="View full-screen"
-              className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-brand-ink opacity-100 shadow transition hover:bg-white sm:opacity-0 sm:group-hover:opacity-100"
+              title="View full screen"
+              className="absolute bottom-3 right-3 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/90 text-brand-ink opacity-100 shadow transition-all duration-200 hover:scale-110 hover:bg-white hover:shadow-lg focus-visible:scale-110 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green sm:opacity-60 sm:group-hover:opacity-100"
             >
               <EyeIcon />
             </button>
@@ -45,11 +39,6 @@ export function ProductGallery({
         ) : (
           <PixelPlaceholder />
         )}
-        {isPlaceholder ? (
-          <span className="absolute left-3 top-3 rounded bg-white/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
-            Sample
-          </span>
-        ) : null}
       </div>
 
       {images.length > 1 ? (
@@ -60,7 +49,8 @@ export function ProductGallery({
               type="button"
               onClick={() => setLightboxIndex(i + 1)}
               aria-label={`View image ${i + 2} full-screen`}
-              className="relative aspect-square overflow-hidden rounded-md bg-neutral-100 transition hover:opacity-80"
+              title="View full screen"
+              className="relative aspect-square cursor-pointer overflow-hidden rounded-md bg-neutral-100 transition-all duration-150 hover:opacity-80 hover:ring-2 hover:ring-brand-green active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green"
             >
               <Image
                 src={image.url}
@@ -101,11 +91,16 @@ function Lightbox({
   const dragState = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(
     null,
   )
+  const activePointers = useRef<Map<number, { x: number; y: number }>>(new Map())
+  const pinchStartDistance = useRef<number | null>(null)
+  const pinchStartZoom = useRef(1)
 
   const resetView = useCallback(() => {
     setZoom(1)
     setPan({ x: 0, y: 0 })
   }, [])
+
+  const clampZoom = (z: number) => Math.min(4, Math.max(1, z))
 
   const goTo = useCallback(
     (next: number) => {
@@ -134,25 +129,62 @@ function Lightbox({
     if (zoom > 1) {
       resetView()
     } else {
-      setZoom(2.2)
+      setZoom(clampZoom(2.2))
     }
   }
 
+  function handleWheel(e: React.WheelEvent) {
+    e.preventDefault()
+    setZoom((z) => {
+      const next = clampZoom(z - e.deltaY * 0.0025 * z)
+      if (next === 1) setPan({ x: 0, y: 0 })
+      return next
+    })
+  }
+
+  function pointerDistance(points: { x: number; y: number }[]) {
+    const [a, b] = points
+    return Math.hypot(a.x - b.x, a.y - b.y)
+  }
+
   function handlePointerDown(e: React.PointerEvent) {
+    activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+
+    if (activePointers.current.size === 2) {
+      // A second finger landed — switch from panning to pinch-zooming.
+      dragState.current = null
+      pinchStartDistance.current = pointerDistance([...activePointers.current.values()])
+      pinchStartZoom.current = zoom
+      return
+    }
+
     if (zoom <= 1) return
     dragState.current = { startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y }
     setIsDragging(true)
-    ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
   }
 
   function handlePointerMove(e: React.PointerEvent) {
+    if (!activePointers.current.has(e.pointerId)) return
+    activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+
+    if (activePointers.current.size === 2 && pinchStartDistance.current) {
+      const distance = pointerDistance([...activePointers.current.values()])
+      const next = clampZoom(pinchStartZoom.current * (distance / pinchStartDistance.current))
+      setZoom(next)
+      if (next === 1) setPan({ x: 0, y: 0 })
+      return
+    }
+
     if (!dragState.current) return
     const dx = e.clientX - dragState.current.startX
     const dy = e.clientY - dragState.current.startY
     setPan({ x: dragState.current.panX + dx, y: dragState.current.panY + dy })
   }
 
-  function handlePointerUp() {
+  function handlePointerUp(e: React.PointerEvent) {
+    activePointers.current.delete(e.pointerId)
+    if (activePointers.current.size < 2) pinchStartDistance.current = null
     dragState.current = null
     setIsDragging(false)
   }
@@ -170,7 +202,8 @@ function Lightbox({
         type="button"
         onClick={onClose}
         aria-label="Close"
-        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+        title="Close"
+        className="absolute right-4 top-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-all duration-150 hover:scale-110 hover:bg-white/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
       >
         <CloseIcon />
       </button>
@@ -181,7 +214,8 @@ function Lightbox({
             type="button"
             onClick={() => goTo(index - 1)}
             aria-label="Previous image"
-            className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:left-4"
+            title="Previous"
+            className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-all duration-150 hover:scale-110 hover:bg-white/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:left-4"
           >
             <ChevronIcon direction="left" />
           </button>
@@ -189,7 +223,8 @@ function Lightbox({
             type="button"
             onClick={() => goTo(index + 1)}
             aria-label="Next image"
-            className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-4"
+            title="Next"
+            className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-all duration-150 hover:scale-110 hover:bg-white/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:right-4"
           >
             <ChevronIcon direction="right" />
           </button>
@@ -203,6 +238,7 @@ function Lightbox({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         onDoubleClick={toggleZoom}
+        onWheel={handleWheel}
       >
         {current ? (
           <Image

@@ -38,7 +38,9 @@ export function PhotoManager({
   const [uploads, setUploads] = useState<UploadItem[]>([])
   const [isDraggingFiles, setIsDraggingFiles] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
-  const dragIndex = useRef<number | null>(null)
+  const [draggingId, setDraggingId] = useState<string | null>(null)
+  const [insertionIndex, setInsertionIndex] = useState<number | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -121,110 +123,190 @@ export function PhotoManager({
     }, 4000)
   }
 
-  function handleDrop(e: React.DragEvent) {
+  function handleFileDrop(e: React.DragEvent) {
     e.preventDefault()
     setIsDraggingFiles(false)
     if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files)
   }
 
-  function handleImageDragStart(index: number) {
-    dragIndex.current = index
+  // --- Image reordering -----------------------------------------------
+
+  function handleImageDragStart(e: React.DragEvent, id: string) {
+    setDraggingId(id)
+    setSaveError(null)
+    e.dataTransfer.effectAllowed = "move"
+    // Firefox requires data to be set for drag to initiate.
+    e.dataTransfer.setData("text/plain", id)
   }
 
-  function handleImageDrop(index: number) {
-    const from = dragIndex.current
-    dragIndex.current = null
-    if (from === null || from === index) return
+  function handleTileDragOver(e: React.DragEvent, hoverIndex: number) {
+    if (!draggingId) return
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
 
+    const rect = e.currentTarget.getBoundingClientRect()
+    const isBeforeHalf = e.clientX - rect.left < rect.width / 2
+    setInsertionIndex(isBeforeHalf ? hoverIndex : hoverIndex + 1)
+  }
+
+  function handleDragEnd() {
+    setDraggingId(null)
+    setInsertionIndex(null)
+  }
+
+  async function handleContainerDrop(e: React.DragEvent) {
+    e.preventDefault()
+    const fromId = draggingId
+    const target = insertionIndex
+    setDraggingId(null)
+    setInsertionIndex(null)
+    if (!fromId || target === null) return
+
+    const fromIndex = order.findIndex((img) => img.id === fromId)
+    if (fromIndex === -1) return
+
+    // Dropping into the gap immediately before or after its own current
+    // position is a no-op.
+    if (target === fromIndex || target === fromIndex + 1) return
+
+    const previous = order
     const next = [...order]
-    const [moved] = next.splice(from, 1)
-    next.splice(index, 0, moved)
+    const [moved] = next.splice(fromIndex, 1)
+    const adjustedTarget = target > fromIndex ? target - 1 : target
+    next.splice(adjustedTarget, 0, moved)
+
     setOrder(next)
-    reorderProductImagesAction(
-      productId,
-      next.map((img) => img.id),
-    )
+    try {
+      await reorderProductImagesAction(
+        productId,
+        next.map((img) => img.id),
+      )
+    } catch {
+      setOrder(previous)
+      setSaveError("Couldn't save the new photo order. Please try again.")
+    }
   }
 
   async function handleSetPrimary(imageId: string) {
+    const previous = order
     setOrder((prev) => prev.map((img) => ({ ...img, isPrimary: img.id === imageId })))
-    await setPrimaryImageAction(productId, imageId)
-    router.refresh()
+    try {
+      await setPrimaryImageAction(productId, imageId)
+      router.refresh()
+    } catch {
+      setOrder(previous)
+      setSaveError("Couldn't set that photo as primary. Please try again.")
+    }
   }
 
   async function handleDelete(imageId: string) {
     if (!confirm("Delete this photo? This can't be undone.")) return
+    const previous = order
     setOrder((prev) => prev.filter((img) => img.id !== imageId))
-    await deleteProductImageAction(productId, imageId)
-    router.refresh()
+    try {
+      await deleteProductImageAction(productId, imageId)
+      router.refresh()
+    } catch {
+      setOrder(previous)
+      setSaveError("Couldn't delete that photo. Please try again.")
+    }
   }
 
   const uploadingCount = uploads.filter((u) => u.status === "uploading").length
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-        {order.map((image, index) => (
-          <div
-            key={image.id}
-            draggable={canEdit}
-            onDragStart={() => handleImageDragStart(index)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={() => handleImageDrop(index)}
-            className={`group relative aspect-square overflow-hidden rounded-md border border-neutral-200 bg-neutral-100 ${
-              canEdit ? "cursor-grab active:cursor-grabbing" : ""
-            }`}
+      {saveError ? (
+        <div className="mb-3 flex items-center justify-between gap-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          <span>{saveError}</span>
+          <button
+            type="button"
+            onClick={() => setSaveError(null)}
+            className="cursor-pointer rounded px-1.5 py-0.5 text-xs font-medium text-red-700 transition hover:bg-red-100"
           >
-            <Image
-              src={image.url}
-              alt={image.alt}
-              fill
-              sizes="200px"
-              className="object-contain p-1"
-            />
-            {image.isPrimary ? (
-              <span className="absolute left-1 top-1 rounded bg-brand-green px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                Primary
-              </span>
-            ) : null}
-            {canEdit ? (
-              <div className="absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-black/60 to-transparent p-1.5 opacity-0 transition group-hover:opacity-100">
-                {!image.isPrimary ? (
+            Dismiss
+          </button>
+        </div>
+      ) : null}
+
+      <div
+        className="grid grid-cols-3 gap-3 sm:grid-cols-4"
+        onDragOver={(e) => draggingId && e.preventDefault()}
+        onDrop={handleContainerDrop}
+      >
+        {order.map((image, index) => (
+          <div key={image.id} className="contents">
+            {insertionIndex === index ? <InsertionIndicator /> : null}
+            <div
+              draggable={canEdit}
+              onDragStart={(e) => handleImageDragStart(e, image.id)}
+              onDragOver={(e) => handleTileDragOver(e, index)}
+              onDragEnd={handleDragEnd}
+              className={`group relative aspect-square overflow-hidden rounded-md border bg-neutral-100 transition-all duration-150 ${
+                canEdit ? "cursor-grab active:cursor-grabbing" : ""
+              } ${
+                draggingId === image.id
+                  ? "scale-95 opacity-40 shadow-lg ring-2 ring-brand-green"
+                  : "border-neutral-200"
+              }`}
+            >
+              <Image
+                src={image.url}
+                alt={image.alt}
+                fill
+                sizes="200px"
+                className="pointer-events-none object-contain p-1"
+              />
+              {image.isPrimary ? (
+                <span className="absolute left-1 top-1 rounded bg-brand-green px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                  Primary
+                </span>
+              ) : null}
+              {canEdit ? (
+                <div
+                  className={`absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-black/60 to-transparent p-1.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100 ${
+                    draggingId ? "pointer-events-none" : ""
+                  }`}
+                >
+                  {!image.isPrimary ? (
+                    <button
+                      type="button"
+                      onClick={() => handleSetPrimary(image.id)}
+                      title="Set as primary image"
+                      aria-label="Set as primary image"
+                      className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-white/90 text-brand-ink shadow-sm transition-all duration-150 hover:scale-110 hover:bg-brand-green hover:text-white hover:shadow active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green"
+                    >
+                      <StarIcon />
+                    </button>
+                  ) : null}
                   <button
                     type="button"
-                    onClick={() => handleSetPrimary(image.id)}
-                    title="Set as primary"
-                    aria-label="Set as primary image"
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-brand-ink transition hover:bg-white"
+                    onClick={() => handleDelete(image.id)}
+                    title="Delete image"
+                    aria-label="Delete image"
+                    className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-white/90 text-red-600 shadow-sm transition-all duration-150 hover:scale-110 hover:bg-red-600 hover:text-white hover:shadow active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                   >
-                    <StarIcon />
+                    <TrashIcon />
                   </button>
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() => handleDelete(image.id)}
-                  title="Delete photo"
-                  aria-label="Delete photo"
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-red-600 transition hover:bg-white"
-                >
-                  <TrashIcon />
-                </button>
-              </div>
-            ) : null}
+                </div>
+              ) : null}
+            </div>
           </div>
         ))}
+        {insertionIndex === order.length ? <InsertionIndicator /> : null}
       </div>
 
       {canEdit ? (
         <div
           onDragOver={(e) => {
+            if (draggingId) return
             e.preventDefault()
             setIsDraggingFiles(true)
           }}
           onDragLeave={() => setIsDraggingFiles(false)}
-          onDrop={handleDrop}
+          onDrop={handleFileDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`mt-4 flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed px-4 py-8 text-center transition ${
+          className={`mt-4 flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed px-4 py-8 text-center transition-colors duration-150 ${
             isDraggingFiles
               ? "border-brand-green bg-brand-green/5"
               : "border-neutral-300 hover:border-neutral-400"
@@ -241,7 +323,7 @@ export function PhotoManager({
               e.target.value = ""
             }}
           />
-          <span className="rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90">
+          <span className="cursor-pointer rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0">
             Upload Photos
           </span>
           <p className="text-xs text-neutral-500">
@@ -286,6 +368,14 @@ export function PhotoManager({
           ) : null}
         </div>
       ) : null}
+    </div>
+  )
+}
+
+function InsertionIndicator() {
+  return (
+    <div className="pointer-events-none flex aspect-square items-center justify-center">
+      <div className="h-[85%] w-1 rounded-full bg-brand-green shadow-[0_0_0_3px_rgba(6,146,62,0.15)]" />
     </div>
   )
 }

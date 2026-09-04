@@ -59,7 +59,7 @@ export function InquiryForm({
         href={whatsappHref(productName)}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center justify-center gap-2 self-start rounded-md border border-brand-green/30 bg-brand-green/5 px-4 py-2 text-sm font-semibold text-brand-green transition hover:bg-brand-green/10"
+        className="inline-flex items-center justify-center gap-2 self-start rounded-md border border-brand-green/30 bg-brand-green/5 px-4 py-2 text-sm font-semibold text-brand-green transition-all duration-150 hover:bg-brand-green/10 active:scale-95"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 shrink-0">
           <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.07-1.34A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm5.2 14.2c-.22.62-1.28 1.2-1.77 1.24-.45.05-1.02.07-1.65-.1-.38-.11-.87-.28-1.5-.55-2.64-1.14-4.36-3.8-4.5-3.98-.13-.18-1.08-1.44-1.08-2.75s.68-1.94.93-2.2c.24-.27.53-.33.71-.33h.5c.16 0 .38-.03.58.45.22.53.75 1.83.81 1.96.07.13.11.28.02.46-.09.18-.14.28-.27.43-.13.16-.28.35-.4.47-.13.13-.27.28-.12.55.16.27.7 1.16 1.5 1.88 1.04.93 1.9 1.22 2.18 1.36.27.13.43.11.6-.07.16-.18.68-.79.86-1.06.18-.27.36-.22.6-.13.25.09 1.56.74 1.83.87.27.13.45.2.51.31.07.13.07.71-.15 1.34Z" />
@@ -99,7 +99,7 @@ export function InquiryForm({
           name="rent_or_buy"
           value={rentOrBuy}
           onChange={(e) => setRentOrBuy(e.target.value as "rent" | "buy")}
-          className={inputClass}
+          className={`${inputClass} cursor-pointer`}
         >
           <option value="rent">Rent</option>
           <option value="buy">Buy</option>
@@ -181,7 +181,7 @@ export function InquiryForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 self-start rounded-md bg-brand-green px-7 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:opacity-90 disabled:pointer-events-none disabled:opacity-60"
+        className="mt-2 self-start rounded-md bg-brand-green px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:opacity-90 active:translate-y-0 active:opacity-100 disabled:pointer-events-none disabled:opacity-60"
       >
         {pending ? "Sending…" : "Send inquiry"}
       </button>
@@ -190,7 +190,7 @@ export function InquiryForm({
 }
 
 const inputClass =
-  "rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+  "rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green focus:ring-1 focus:ring-brand-green"
 
 function Field({
   label,

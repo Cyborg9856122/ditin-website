@@ -23,7 +23,7 @@ export function LoginForm({ next }: { next: string }) {
           type="email"
           autoComplete="email"
           required
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+          className="rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green focus:ring-1 focus:ring-brand-green"
         />
       </div>
 
@@ -37,7 +37,7 @@ export function LoginForm({ next }: { next: string }) {
           type="password"
           autoComplete="current-password"
           required
-          className="rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green"
+          className="rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none transition-colors duration-150 hover:border-neutral-400 focus:border-brand-green focus:ring-1 focus:ring-brand-green"
         />
       </div>
 
@@ -50,14 +50,14 @@ export function LoginForm({ next }: { next: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+        className="mt-2 rounded-md bg-brand-green px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:-translate-y-px hover:opacity-90 active:translate-y-0 active:opacity-100 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>
 
       <Link
         href="/admin/forgot-password"
-        className="text-center text-xs text-neutral-500 underline"
+        className="rounded px-1 py-0.5 text-center text-xs text-neutral-500 underline transition-all duration-150 hover:bg-neutral-100 hover:no-underline active:scale-95"
       >
         Forgot password?
       </Link>

@@ -102,10 +102,10 @@ function StatusButton({
       <button
         type="submit"
         disabled={active}
-        className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+        className={`rounded-full px-3 py-1 text-xs font-medium transition-all duration-150 ${
           active
             ? "bg-brand-ink text-white"
-            : "border border-neutral-300 text-neutral-600 hover:bg-neutral-100"
+            : "border border-neutral-300 text-neutral-600 hover:bg-neutral-100 active:scale-95"
         }`}
       >
         {INQUIRY_STATUS_LABELS[status]}

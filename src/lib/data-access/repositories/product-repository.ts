@@ -8,6 +8,7 @@ import type {
   ProductStatus,
 } from "@/lib/domain/types"
 import type { ProductFormValues } from "@/lib/domain/validation/product-schema"
+import { slugify } from "@/lib/domain/utils/slug"
 
 export type ProductFilters = {
   status?: ProductStatus
@@ -91,9 +92,32 @@ export async function slugExists(
   return data !== null
 }
 
+/**
+ * Slugs are an internal URL detail now — admins never see or edit them.
+ * Generated once from the name at creation time and never changed after,
+ * so existing links keep working even if the product is later renamed.
+ * Falls back to a short random suffix if the name produces an empty slug
+ * (e.g. a name that's entirely emoji/symbols), and disambiguates
+ * collisions automatically by appending -2, -3, etc.
+ */
+export async function generateUniqueSlug(
+  supabase: SupabaseClient<Database>,
+  name: string,
+): Promise<string> {
+  const base = slugify(name) || `product-${crypto.randomUUID().slice(0, 8)}`
+
+  let candidate = base
+  let attempt = 1
+  while (await slugExists(supabase, candidate)) {
+    attempt += 1
+    candidate = `${base}-${attempt}`
+  }
+  return candidate
+}
+
 export async function createProduct(
   supabase: SupabaseClient<Database>,
-  values: ProductFormValues,
+  values: ProductFormValues & { slug: string },
   createdBy: string,
 ): Promise<Product> {
   const { data, error } = await supabase

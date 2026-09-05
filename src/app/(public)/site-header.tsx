@@ -2,13 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { brand } from "@/lib/config/brand"
 import { MobileNav } from "@/components/mobile-nav"
-
-const NAV_LINKS = [
-  { href: "/catalogue", label: "Catalogue" },
-  { href: "/catalogue?placement=indoor", label: "Indoor" },
-  { href: "/catalogue?placement=outdoor", label: "Outdoor" },
-  { href: "/inquire", label: "Contact" },
-]
+import { SiteNavLinks } from "./site-nav-links"
 
 export function SiteHeader() {
   return (
@@ -27,15 +21,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm font-medium text-brand-ink sm:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="transition-colors duration-150 hover:text-brand-green active:opacity-70"
-            >
-              {link.label}
-            </Link>
-          ))}
+          <SiteNavLinks />
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-4">

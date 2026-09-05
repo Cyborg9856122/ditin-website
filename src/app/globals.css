@@ -6,6 +6,14 @@
   --color-brand-ink: #111111;
   --color-brand-ink-soft: #212121;
   --color-brand-accent: #e67514;
+
+  /* Premium dark-section palette. Three near-black tones, each with a
+     faint tint, so consecutive dark sections don't read as one flat
+     block: brand-ink is the "bookend" tone (hero, closing CTA, footer),
+     the other two are used for mid-page dark sections in rotation. */
+  --color-surface-dark: #0d1915; /* deep charcoal, green undertone */
+  --color-surface-dark-2: #0b141d; /* deep charcoal, blue undertone */
+  --color-surface-dark-soft: #16241f; /* raised panels sitting on surface-dark */
 }
 
 @theme inline {
@@ -13,6 +21,9 @@
   --color-brand-ink: var(--color-brand-ink);
   --color-brand-ink-soft: var(--color-brand-ink-soft);
   --color-brand-accent: var(--color-brand-accent);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-surface-dark-2: var(--color-surface-dark-2);
+  --color-surface-dark-soft: var(--color-surface-dark-soft);
 
   --color-background: #ffffff;
   --color-foreground: var(--color-brand-ink);
@@ -150,6 +161,129 @@ h4 {
   .animate-float-slow,
   .animate-float-slower {
     animation: none;
+  }
+}
+
+/* Smooth-scroll for in-page anchors (e.g. "Ask about this" -> #inquire),
+   off entirely for anyone who has asked for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ---- Scroll reveal ----
+   Paired with the <Reveal> client component: starts hidden/offset, then
+   gets `.reveal-visible` added once it's ~12% into the viewport. Collapses
+   to an instant, motionless state under reduced motion. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---- Dark sections & glass panels ----
+   Shared look for the premium dark bands (see globals palette above):
+   light text on a near-black surface, with a "glass" card treatment for
+   anything that needs to float on top of one without a hard box. */
+.section-on-dark {
+  color: #e5e5e5;
+}
+
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-panel-hover {
+  transition: border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease,
+    transform 200ms ease;
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(6, 146, 62, 0.45);
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px -8px rgba(6, 146, 62, 0.25);
+}
+
+/* Faint grid texture for dark sections away from the hero — same motif,
+   lower contrast, no mouse tracking (keeps it cheap off the hero). */
+.bg-pixel-grid-faint {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ---- Nav active/hover underline ----
+   A thin bar that scales in from the left on hover or when the route
+   matches, rather than an instant color snap. */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  border-radius: 1px;
+  background-color: var(--color-brand-green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms ease;
+}
+
+.nav-link:hover::after,
+.nav-link[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link::after {
+    transition: none;
+  }
+}
+
+/* ---- FAQ accordion ----
+   CSS-only smooth expand/collapse for <details>/<summary>, animating the
+   grid row track (0fr -> 1fr) instead of display:none, so it slides open
+   rather than snapping. */
+.faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease;
+}
+
+details[open] > .faq-panel {
+  grid-template-rows: 1fr;
+}
+
+.faq-panel > div {
+  overflow: hidden;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-panel {
+    transition: none;
   }
 }
 

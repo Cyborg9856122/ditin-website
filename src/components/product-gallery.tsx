@@ -24,7 +24,7 @@ export function ProductGallery({ images }: { images: GalleryImage[] }) {
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               priority
-              className="object-contain p-4"
+              className="object-contain p-4 transition-transform duration-500 ease-out group-hover:scale-105"
             />
             <button
               type="button"

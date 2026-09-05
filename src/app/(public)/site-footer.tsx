@@ -47,7 +47,15 @@ export function SiteFooter() {
             <ul className="mt-3 flex flex-col gap-2 text-sm">
               <li>
                 <Link
-                  href="/about"
+                  href="/#categories"
+                  className="transition-colors duration-150 hover:text-white active:opacity-70"
+                >
+                  Categories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#about"
                   className="transition-colors duration-150 hover:text-white active:opacity-70"
                 >
                   About
@@ -55,7 +63,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link
-                  href="/faq"
+                  href="/#faq"
                   className="transition-colors duration-150 hover:text-white active:opacity-70"
                 >
                   FAQ

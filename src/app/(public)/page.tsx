@@ -136,8 +136,20 @@ const PROCESS_STEPS = [
   },
 ]
 
-// Homepage shows a short teaser of the full FAQ list (see /faq for all of it).
-const HOME_FAQS = FAQS.slice(0, 4)
+const ABOUT_POINTS = [
+  {
+    title: "Specs before conversations",
+    body: "Every screen in the catalogue lists its pixel pitch, brightness, size, and category up front, so you can shortlist options yourself before reaching out.",
+  },
+  {
+    title: "Rent or buy, your call",
+    body: "Short-term events and permanent installs draw from the same catalogue — tell us which you need and we'll follow up with pricing that matches.",
+  },
+  {
+    title: "Indoor and outdoor, covered",
+    body: "From lobby displays to weatherproof screens built for facades and forecourts, placement is filtered right alongside category.",
+  },
+]
 
 export default function HomePage() {
   return (
@@ -272,7 +284,7 @@ export default function HomePage() {
       </section>
 
       {/* ---- Category showcase (dark) ---- */}
-      <section className="relative overflow-hidden bg-surface-dark-2 px-6 py-24">
+      <section id="categories" className="relative scroll-mt-16 overflow-hidden bg-surface-dark-2 px-6 py-24">
         <div className="bg-dot-grid-faint absolute inset-0" />
         <div
           aria-hidden
@@ -373,8 +385,39 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ---- About (dark) ---- */}
+      <section
+        id="about"
+        className="bg-diagonal-lines-faint relative scroll-mt-16 overflow-hidden bg-surface-dark px-6 py-24"
+      >
+        <div className="relative mx-auto max-w-5xl">
+          <Reveal>
+            <p className="font-measured text-xs uppercase tracking-[0.25em] text-brand-green">
+              About Ditin Displays
+            </p>
+            <h2 className="mt-3 max-w-xl text-3xl font-semibold text-white sm:text-4xl">
+              Built to make buying or renting a screen straightforward
+            </h2>
+            <p className="mt-4 max-w-2xl leading-relaxed text-neutral-400">
+              We sell and rent LED and display solutions across Iraq — indoor and
+              outdoor, short-term and permanent — and put specs up front so you can
+              browse it yourself instead of waiting on a one-off proposal for every
+              screen.
+            </p>
+          </Reveal>
+          <div className="mt-12 grid grid-cols-1 gap-10 sm:grid-cols-3">
+            {ABOUT_POINTS.map((item, i) => (
+              <Reveal key={item.title} delay={i * 90}>
+                <h3 className="text-base font-semibold text-white">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-400">{item.body}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ---- FAQ (light) ---- */}
-      <section className="border-t border-neutral-100 bg-neutral-50 px-6 py-24">
+      <section id="faq" className="scroll-mt-16 border-t border-neutral-100 bg-neutral-50 px-6 py-24">
         <div className="mx-auto max-w-3xl">
           <Reveal>
             <div className="text-center">
@@ -388,7 +431,7 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={100}>
             <div className="mt-10 divide-y divide-neutral-200 border-t border-neutral-200">
-              {HOME_FAQS.map((faq) => (
+              {FAQS.map((faq) => (
                 <details key={faq.q} className="group py-5">
                   <summary className="-mx-2 flex cursor-pointer list-none items-center justify-between gap-4 rounded-md px-2 text-sm font-semibold text-brand-ink transition-colors duration-150 marker:content-none hover:text-brand-green">
                     {faq.q}
@@ -406,14 +449,6 @@ export default function HomePage() {
                   </div>
                 </details>
               ))}
-            </div>
-            <div className="mt-6 text-center">
-              <Link
-                href="/faq"
-                className="inline-block rounded px-1 py-0.5 text-sm font-medium text-brand-green transition-all duration-150 hover:underline active:scale-95"
-              >
-                See all FAQs →
-              </Link>
             </div>
           </Reveal>
         </div>

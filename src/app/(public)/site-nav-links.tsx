@@ -3,10 +3,15 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+// Catalogue and Contact are real pages; the rest are anchor links into
+// homepage sections (see id="categories" / "about" / "faq" on the
+// homepage sections). Clicking one from another page navigates home and
+// scrolls to the section — Next.js handles that automatically.
 const NAV_LINKS = [
   { href: "/catalogue", label: "Catalogue" },
-  { href: "/about", label: "About" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/#categories", label: "Categories" },
+  { href: "/#about", label: "About" },
+  { href: "/#faq", label: "FAQ" },
   { href: "/inquire", label: "Contact" },
 ]
 
@@ -16,7 +21,10 @@ export function SiteNavLinks() {
   return (
     <>
       {NAV_LINKS.map((link) => {
-        const active = pathname === link.href
+        // Only page links (no "#") get a persistent active state — anchor
+        // links just get the hover underline, since knowing which
+        // section is currently scrolled into view would need extra JS.
+        const active = !link.href.includes("#") && pathname === link.href
 
         return (
           <Link

@@ -4,6 +4,7 @@ import { PRODUCT_CATEGORY_LABELS, type ProductCategory } from "@/lib/domain/type
 import { PixelPitchCalculator } from "@/components/pixel-pitch-calculator"
 import { HeroGlow } from "@/components/hero-glow"
 import { Reveal } from "@/components/reveal"
+import { FAQS } from "@/lib/content/faqs"
 
 const CATEGORY_BLURBS: Record<ProductCategory, string> = {
   led_wall: "Modular, seamless, built for stages and storefronts.",
@@ -135,24 +136,8 @@ const PROCESS_STEPS = [
   },
 ]
 
-const FAQS = [
-  {
-    q: "What's the difference between renting and buying?",
-    a: "Renting covers short-term needs — weddings, conferences, activations — and comes fully set up for your dates. Buying is for a permanent install, like a storefront or lobby screen, that runs every day for years.",
-  },
-  {
-    q: "Do you install outdoor and weatherproof screens?",
-    a: "Yes — our outdoor and weatherproof range is sealed against the elements and built for facades, forecourts, and any screen exposed to weather.",
-  },
-  {
-    q: "How do I know what pixel pitch or size I need?",
-    a: "It depends on viewing distance and the space. Tell us the room or venue and what it's for in an inquiry, and we'll recommend a fit rather than leave you guessing from spec sheets alone.",
-  },
-  {
-    q: "How fast can a rental be ready?",
-    a: "It depends on the screen and your dates — send an inquiry with your event date and we'll confirm availability and lead time directly.",
-  },
-]
+// Homepage shows a short teaser of the full FAQ list (see /faq for all of it).
+const HOME_FAQS = FAQS.slice(0, 4)
 
 export default function HomePage() {
   return (
@@ -215,10 +200,13 @@ export default function HomePage() {
 
       {/* ---- How it works (dark) ---- */}
       <section className="relative overflow-hidden bg-surface-dark px-6 py-24">
-        <div className="bg-pixel-grid-faint absolute inset-0" />
         <div
           aria-hidden
           className="absolute -left-16 top-1/3 h-64 w-64 rounded-full bg-brand-green/10 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-brand-accent/5 blur-3xl"
         />
         <div className="relative mx-auto max-w-6xl">
           <Reveal>
@@ -285,7 +273,7 @@ export default function HomePage() {
 
       {/* ---- Category showcase (dark) ---- */}
       <section className="relative overflow-hidden bg-surface-dark-2 px-6 py-24">
-        <div className="bg-pixel-grid-faint absolute inset-0" />
+        <div className="bg-dot-grid-faint absolute inset-0" />
         <div
           aria-hidden
           className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-brand-accent/10 blur-3xl"
@@ -400,7 +388,7 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={100}>
             <div className="mt-10 divide-y divide-neutral-200 border-t border-neutral-200">
-              {FAQS.map((faq) => (
+              {HOME_FAQS.map((faq) => (
                 <details key={faq.q} className="group py-5">
                   <summary className="-mx-2 flex cursor-pointer list-none items-center justify-between gap-4 rounded-md px-2 text-sm font-semibold text-brand-ink transition-colors duration-150 marker:content-none hover:text-brand-green">
                     {faq.q}
@@ -418,6 +406,14 @@ export default function HomePage() {
                   </div>
                 </details>
               ))}
+            </div>
+            <div className="mt-6 text-center">
+              <Link
+                href="/faq"
+                className="inline-block rounded px-1 py-0.5 text-sm font-medium text-brand-green transition-all duration-150 hover:underline active:scale-95"
+              >
+                See all FAQs →
+              </Link>
             </div>
           </Reveal>
         </div>

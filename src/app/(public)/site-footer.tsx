@@ -7,7 +7,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t-2 border-brand-green bg-brand-ink text-neutral-300">
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-5">
           <div className="sm:col-span-2">
             <Image
               src="/brand/ditin-displays-white.png"
@@ -37,6 +37,38 @@ export function SiteFooter() {
                   </Link>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+              Company
+            </p>
+            <ul className="mt-3 flex flex-col gap-2 text-sm">
+              <li>
+                <Link
+                  href="/about"
+                  className="transition-colors duration-150 hover:text-white active:opacity-70"
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/faq"
+                  className="transition-colors duration-150 hover:text-white active:opacity-70"
+                >
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/inquire"
+                  className="transition-colors duration-150 hover:text-white active:opacity-70"
+                >
+                  Get a quote
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -41,8 +41,7 @@ export default async function CataloguePage(props: PageProps<"/catalogue">) {
 
   return (
     <main>
-      <section className="relative overflow-hidden bg-brand-ink px-6 py-16 text-center sm:text-left">
-        <div className="bg-pixel-grid-faint absolute inset-0" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-brand-ink to-surface-dark px-6 py-16 text-center sm:text-left">
         <div
           aria-hidden
           className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-brand-green/10 blur-3xl"

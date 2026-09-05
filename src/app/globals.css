@@ -222,12 +222,28 @@ h4 {
   box-shadow: 0 12px 32px -8px rgba(6, 146, 62, 0.25);
 }
 
-/* Faint grid texture for dark sections away from the hero — same motif,
-   lower contrast, no mouse tracking (keeps it cheap off the hero). */
-.bg-pixel-grid-faint {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 28px 28px;
+/* The pixel-grid line texture (.bg-pixel-grid, .bg-pixel-grid-glow) is
+   reserved for the homepage hero only — everything else below picks a
+   different, non-grid treatment so dark sections don't all look the
+   same "design". */
+
+/* Soft dot lattice — a lighter, more organic echo of the hero's pixel
+   grid without repeating it outright. Used sparingly on one dark
+   section (category showcase). */
+.bg-dot-grid-faint {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Diagonal hairline texture — a third distinct dark-section motif. */
+.bg-diagonal-lines-faint {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px,
+    transparent 16px
+  );
 }
 
 /* ---- Nav active/hover underline ----

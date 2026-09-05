@@ -142,8 +142,7 @@ export default async function ProductDetailPage(props: PageProps<"/catalogue/[sl
 
               {/* Spec sheet — dark, mono-value panel: reads like a real technical
                   data sheet rather than another set of light cards. */}
-              <div className="relative mt-8 overflow-hidden rounded-xl bg-brand-ink p-5">
-                <div className="bg-pixel-grid-faint absolute inset-0" />
+              <div className="relative mt-8 overflow-hidden rounded-xl border-t-2 border-brand-green bg-brand-ink p-5">
                 <p className="relative font-measured text-[11px] uppercase tracking-[0.2em] text-brand-green">
                   Specifications
                 </p>
